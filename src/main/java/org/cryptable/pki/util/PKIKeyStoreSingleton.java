@@ -1,5 +1,8 @@
 package org.cryptable.pki.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -11,9 +14,9 @@ import java.security.cert.Certificate;
  * User: davidtillemans
  * Date: 8/06/13
  * Time: 18:41
- * To change this template use File | Settings | File Templates.
  */
 public class PKIKeyStoreSingleton {
+
     static private PKIKeyStore pkiKeyStore;
 
     private PKIKeyStoreSingleton() {

@@ -30,11 +30,11 @@ package org.cryptable.pki.util;
  * User: davidtillemans
  * Date: 10/06/13
  * Time: 21:29
- * To change this template use File | Settings | File Templates.
  */
 public class PKIKeyStoreException extends Exception {
+
     /**
-	 * 
+	 * serial version ID for serialization
 	 */
 	private static final long serialVersionUID = 1L;
 

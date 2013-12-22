@@ -10,18 +10,24 @@ import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.cryptable.pki.util.PKIKeyStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
 import java.util.Date;
 
 /**
  * Process the revocation
+ *
  * User: davidtillemans
  * Date: 6/07/13
  * Time: 09:49
  * To change this template use File | Settings | File Templates.
  */
 public class ProcessRevocation {
+
+    final Logger logger = LoggerFactory.getLogger(ProcessRevocation.class);
+
     private CertReqMsg[] certReqMsgs;
     PKIKeyStore pkiKeyStore;
 

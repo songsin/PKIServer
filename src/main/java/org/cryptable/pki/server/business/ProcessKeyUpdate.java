@@ -10,6 +10,8 @@ import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.cryptable.pki.util.PKIKeyStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
 import java.util.Date;
@@ -23,6 +25,9 @@ import java.util.Date;
  * To change this template use File | Settings | File Templates.
  */
 public class ProcessKeyUpdate {
+
+    final Logger logger = LoggerFactory.getLogger(ProcessKeyUpdate.class);
+
     private CertReqMsg[] certReqMsgs;
     private PKIKeyStore pkiKeyStore;
 

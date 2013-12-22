@@ -26,6 +26,9 @@ package org.cryptable.pki.util;
 
 import org.bouncycastle.asn1.cmp.CMPCertificate;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.security.*;
 import java.security.cert.*;
 import java.security.cert.Certificate;
@@ -43,6 +46,8 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class PKIKeyStore {
+
+    final Logger logger = LoggerFactory.getLogger(PKIKeyStore.class);
 
     private String provider;
 
@@ -72,6 +77,7 @@ public class PKIKeyStore {
         this.cmpCertificateChain = new ArrayList<CMPCertificate>();
         this.secureRandom = SecureRandom.getInstance(securePRNG);
         this.secureRandom.setSeed(seed);
+        logger.info("PKIKeystore initializes with provider [" + provider + "] and PRNG [" + securePRNG + "]");
     }
 
     /**
@@ -104,6 +110,9 @@ public class PKIKeyStore {
             this.certificateChain.add((X509Certificate)certificate);
             this.cmpCertificateChain.add(CMPCertificate.getInstance(certificate.getEncoded()));
         }
+
+        logger.info("PKI Keystore initialized with Sender [" + ((X509Certificate) senderCertificate).getSubjectDN().getName() +"]");
+        logger.info("PKI Keystore initialized with Singer [" + ((X509Certificate) caCertificate).getSubjectDN().getName() +"]");
     }
 
     /**

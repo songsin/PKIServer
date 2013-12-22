@@ -11,6 +11,8 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.cryptable.pki.util.PKIKeyStore;
 import org.cryptable.pki.util.PKIKeyStoreSingleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
 import java.util.Date;
@@ -23,22 +25,18 @@ import java.util.Date;
  * Time: 08:53
  */
 public class ProcessInitialization {
-    private CertReqMsg[] certReqMsgs;
+
+    final Logger logger = LoggerFactory.getLogger(ProcessInitialization.class);
+
     private PKIKeyStore pkiKeyStore;
 
     public ProcessInitialization(PKIKeyStore pkiKeyStore) {
         this.pkiKeyStore = pkiKeyStore;
-        certReqMsgs = null;
     }
 
-    public ProcessInitialization initialize(PKIBody pkiBody) {
+   public PKIBody getResponse(PKIBody pkiBody) throws OperatorCreationException {
 
-        certReqMsgs = CertReqMessages.getInstance(pkiBody.getContent()).toCertReqMsgArray();
-
-        return this;
-    }
-
-    public PKIBody getResponse() throws OperatorCreationException {
+        CertReqMsg[] certReqMsgs = CertReqMessages.getInstance(pkiBody.getContent()).toCertReqMsgArray();
 
         // Signer of the certificate
         ContentSigner sigGen = new JcaContentSignerBuilder("SHA256WithRSAEncryption")

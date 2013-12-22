@@ -12,6 +12,8 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import java.io.FileInputStream;
@@ -30,9 +32,11 @@ import java.security.spec.RSAPrivateKeySpec;
  * User: davidtillemans
  * Date: 8/06/13
  * Time: 17:41
- * To change this template use File | Settings | File Templates.
  */
 public class PKIServer  {
+
+    final Logger logger = LoggerFactory.getLogger(PKIServer.class);
+
     private final int port;
 
     /**

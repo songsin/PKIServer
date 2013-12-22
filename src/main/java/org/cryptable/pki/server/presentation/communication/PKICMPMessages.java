@@ -50,6 +50,8 @@ import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.operator.jcajce.JceAsymmetricKeyWrapper;
 import org.cryptable.pki.util.PKIKeyStore;
 import org.cryptable.pki.util.PKIKeyStoreException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -70,9 +72,11 @@ import java.util.*;
  * User: davidtillemans
  * Date: 1/06/13
  * Time: 12:33
- * To change this template use File | Settings | File Templates.
  */
 public class PKICMPMessages {
+
+    final Logger logger = LoggerFactory.getLogger(PKICMPMessages.class);
+
     public static final int TRANSACTIONID_SIZE = 64;
 
     private PKIKeyStore pkiKeyStore;
