@@ -34,7 +34,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * This class holds the key and certificate material for the authentication
+ * This class holds the key and certificate material for authentication
  * and protection of the data
  *
  * User: David Tillemans
@@ -73,6 +73,7 @@ public class PKIKeyStore {
         this.secureRandom = SecureRandom.getInstance(securePRNG);
         this.secureRandom.setSeed(seed);
     }
+
     /**
      * Default Constructor
      */
@@ -189,30 +190,40 @@ public class PKIKeyStore {
         this.x509CRL = x509CRL;
     }
 
+    /**
+     * Verifies a certificate against this CA.
+     *
+     * @param certificate
+     * @param signatureDate
+     * @throws PKIKeyStoreException
+     */
     public void verifyCertificate(X509Certificate certificate, Date signatureDate) throws PKIKeyStoreException {
 
         try {
-            certificate.checkValidity();
+            certificate.checkValidity(signatureDate);
 
-             if (x509CRL != null) {
-                 X509CRLEntry x509CRLEntry = x509CRL.getRevokedCertificate(certificate.getSerialNumber());
-                 if ((x509CRLEntry != null) &&
-                     (x509CRLEntry.getRevocationDate().before(signatureDate))) {
-                     throw new PKIKeyStoreException("E: Certificate [" + certificate.getIssuerDN().getName() + ":"
-                             + certificate.getSerialNumber().toString() + "] was revoked on "
-                             + x509CRLEntry.getRevocationDate().toString() + " because "
-                             + x509CRLEntry.getRevocationReason().toString());
-                 }
+            if (x509CRL != null) {
+                X509CRLEntry x509CRLEntry = x509CRL.getRevokedCertificate(certificate.getSerialNumber());
+                if ((x509CRLEntry != null) &&
+                    (x509CRLEntry.getRevocationDate().before(signatureDate))) {
+                    throw new PKIKeyStoreException("E: Certificate [" + certificate.getIssuerDN().getName() + ":"
+                        + certificate.getSerialNumber().toString() + "] was revoked on "
+                        + x509CRLEntry.getRevocationDate().toString() + " because "
+                        + x509CRLEntry.getRevocationReason().toString());
+                }
 
+            }
+            else {
+                throw new PKIKeyStoreException("E: CRL is not configured");
             }
         } catch (CertificateExpiredException e) {
             throw new PKIKeyStoreException("E: Certificate expired of [" + certificate.getIssuerDN().getName() + ":"
-                    + certificate.getSerialNumber().toString() + ":"
-                    + certificate.getNotAfter().toString() + "]");
+                + certificate.getSerialNumber().toString() + ":"
+                + certificate.getNotAfter().toString() + "]");
         } catch (CertificateNotYetValidException e) {
             throw new PKIKeyStoreException("E: Certificate not yet valid of [" + certificate.getIssuerDN().getName() + ":"
-                    + certificate.getSerialNumber().toString() + ":"
-                    + certificate.getNotAfter().toString() + "]");
+                + certificate.getSerialNumber().toString() + ":"
+                + certificate.getNotAfter().toString() + "]");
         }
     }
 }

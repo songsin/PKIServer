@@ -32,7 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
+ * Class for PKICMPRequest and keeps the main components of the CA
+ *
  * User: davidtillemans
  * Date: 9/06/13
  * Time: 14:03

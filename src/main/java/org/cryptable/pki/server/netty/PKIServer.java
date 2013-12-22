@@ -18,12 +18,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.UnrecoverableKeyException;
+import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateKey;
@@ -49,16 +44,31 @@ public class PKIServer  {
         this.port = port;
     }
 
+    /**
+     * Initializes the PKI Server, loading the Key pairs for authentication and communication
+     *
+     * @return
+     * @throws UnrecoverableKeyException
+     * @throws NoSuchProviderException
+     * @throws NoSuchAlgorithmException
+     * @throws KeyStoreException
+     * @throws CertificateException
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
     public PKIServer init() throws UnrecoverableKeyException, NoSuchProviderException, NoSuchAlgorithmException, KeyStoreException, CertificateException, FileNotFoundException, IOException {
     	
     	KeyStore keyStore = KeyStore.getInstance("JKS");
     	keyStore.load(new FileInputStream("keystore.jks"), "system".toCharArray());
 
-        // TODO: 0 position change to search the corresponding certificate
-    	PKIKeyStoreSingleton.init((PrivateKey) keyStore.getKey("COMM", "ca-system".toCharArray()),
-                keyStore.getCertificateChain("COMM")[0],
-                (PrivateKey) keyStore.getKey("CAPK", "ca-system".toCharArray()),
-                keyStore.getCertificateChain("CA")[0],
+        PrivateKey  communicationPrivateKey = (PrivateKey)keyStore.getKey("COMM", "ca-system".toCharArray());
+        Certificate communicationPublicKey = keyStore.getCertificate("COMM");
+        PrivateKey  caPrivateKey = (PrivateKey)keyStore.getKey("CA", "ca-system".toCharArray());
+        Certificate caPublicKey = keyStore.getCertificate("CA");
+        PKIKeyStoreSingleton.init( communicationPrivateKey,
+                communicationPublicKey,
+                caPrivateKey,
+                caPublicKey,
                 keyStore.getCertificate("RA"),
                 keyStore.getCertificateChain("CA"),
                 "BC",
