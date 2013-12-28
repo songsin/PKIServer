@@ -478,6 +478,13 @@ public class GeneratePKI {
     public void createPKI() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, OperatorCreationException, CertificateException, CertIOException, CRLException {
         Security.addProvider(new BouncyCastleProvider());
 
+        for (Provider provider : Security.getProviders()) {
+            System.out.println("Provider: " + provider.getName());
+            for (Provider.Service service : provider.getServices()) {
+                System.out.println("  Algorithm: " + service.getAlgorithm());
+            }
+        }
+
         //
         // RA keys
         //

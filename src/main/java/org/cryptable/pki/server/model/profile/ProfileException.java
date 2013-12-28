@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  * Date: 12/22/13
  * Time: 9:42 PM
  */
-public class ProfileException extends Throwable {
+public class ProfileException extends Exception {
     final Logger logger = LoggerFactory.getLogger(ProfileException.class);
 
     public ProfileException(String s) {

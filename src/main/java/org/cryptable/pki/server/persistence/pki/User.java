@@ -1,12 +1,9 @@
-package org.cryptable.pki.server.model.pki;
+package org.cryptable.pki.server.persistence.pki;
 
-import javax.security.cert.Certificate;
 import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 /**
  * This is the user model which contains a lot of certificates
@@ -16,8 +13,9 @@ import javax.persistence.Version;
  * Time: 6:30 PM
  */
 @Entity
-@Table(name="e_junktable")
+@Table(name="USER")
 public class User {
+
 
     /**
      * Distinguished name of the user for its certificates

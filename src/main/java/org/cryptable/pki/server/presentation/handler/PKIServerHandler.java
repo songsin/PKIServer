@@ -22,7 +22,6 @@ import org.cryptable.pki.util.PKIKeyStoreSingleton;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.MessageList;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -56,24 +55,21 @@ public class PKIServerHandler extends ChannelInboundHandlerAdapter {
     private byte[] buf;
 
     @Override
-	public void messageReceived(ChannelHandlerContext ctx, MessageList<Object> msgs) {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
 
-        MessageList<Object> out = MessageList.newInstance();
-		int size = msgs.size();
-		
+		FullHttpResponse out = null;
+
 		try {
-			for (int i = 0; i < size; i++) {
-				if (!messageReceived(ctx, msgs.get(i), out)) {
-					break;
-				}
-			}
+			out = messageReceived(ctx, msg);
+
 		} finally {
-			msgs.releaseAllAndRecycle();
 			ctx.write(out);
+            ctx.flush();
 		}
 	}
 
-    private boolean messageReceived(ChannelHandlerContext ctx, Object msg, MessageList<Object> out) {
+
+    private FullHttpResponse messageReceived(ChannelHandlerContext ctx, Object msg) {
     	
     	if (msg instanceof FullHttpRequest) {
     		fullHttpRequest = (FullHttpRequest) msg;
@@ -90,13 +86,13 @@ public class PKIServerHandler extends ChannelInboundHandlerAdapter {
             else
                 doError();
 
-            return writeResponse(fullHttpRequest, out);
+            return writeResponse(fullHttpRequest);
     	}
     	
-    	return true;
+    	return null;
     }
 
-    private boolean writeResponse(HttpObject currentObj, MessageList<Object> out) {
+    private FullHttpResponse writeResponse(HttpObject currentObj) {
 
     	// Decide whether to close the connection or not.
         boolean keepAlive = isKeepAlive(fullHttpRequest);
@@ -116,10 +112,8 @@ public class PKIServerHandler extends ChannelInboundHandlerAdapter {
         }
 
         // Write the response.
-        out.add(response);
+        return response;
         
-        // Close the non-keep-alive connection after the write operation is done.
-        return keepAlive;
     }
 
     private byte[] doError() {
@@ -169,10 +163,10 @@ public class PKIServerHandler extends ChannelInboundHandlerAdapter {
             /* process kind of message */
             switch (pkiMessage.getBody().getType()) {
                 case PKIBody.TYPE_INIT_REQ:
-                    pkiBody = new ProcessInitialization(pkiKeyStore).initialize(pkiMessage.getBody()).getResponse();
+                    // pkiBody = new ProcessInitialization(pkiKeyStore).initialize(pkiMessage.getBody()).getResponse();
                     break;
                 case PKIBody.TYPE_CERT_REQ:
-                    pkiBody = new ProcessCertification(pkiKeyStore).initialize(pkiMessage.getBody()).getResponse();
+                    // pkiBody = new ProcessCertification(pkiKeyStore).initialize(pkiMessage.getBody()).getResponse();
                     break;
                 case PKIBody.TYPE_KEY_UPDATE_REQ:
                     pkiBody = new ProcessKeyUpdate(pkiKeyStore).initialize(pkiMessage.getBody()).getResponse();

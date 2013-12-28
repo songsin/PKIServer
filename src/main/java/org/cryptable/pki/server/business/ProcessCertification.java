@@ -4,15 +4,13 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.*;
 import org.bouncycastle.asn1.crmf.CertReqMessages;
 import org.bouncycastle.asn1.crmf.CertReqMsg;
-import org.bouncycastle.asn1.x509.Extension;
-import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX500NameUtil;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.cryptable.pki.server.model.profile.CertificateProfile;
+import org.cryptable.pki.server.persistence.profile.jaxb.JAXBProfile;
 import org.cryptable.pki.util.PKIKeyStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,14 +34,30 @@ public class ProcessCertification {
 
     private PKIKeyStore pkiKeyStore;
 
-    private List<CertificateProfile> certificationProfiles;
+    private List<JAXBProfile> certificationProfiles;
+
+    public PKIKeyStore getPkiKeyStore() {
+        return pkiKeyStore;
+    }
+
+    public void setPkiKeyStore(PKIKeyStore pkiKeyStore) {
+        this.pkiKeyStore = pkiKeyStore;
+    }
+
+    public List<JAXBProfile> getCertificationProfiles() {
+        return certificationProfiles;
+    }
+
+    public void setCertificationProfiles(List<JAXBProfile> certificationProfiles) {
+        this.certificationProfiles = certificationProfiles;
+    }
 
     /* private methods */
     private CertResponse processRequest(ContentSigner sigGen, CertReqMsg certReqMsg) throws ProcessRequestException {
 
-        try {
+//        try {
             // Implement special OID and RegControl to pass the profile
-            CertificateProfile certificateProfile = certificationProfiles.get(certReqMsg.getCertReq().getCertReqId().getValue().intValue());
+            JAXBProfile certificateProfile = certificationProfiles.get(certReqMsg.getCertReq().getCertReqId().getValue().intValue());
 
             if (certificateProfile == null)
                 throw new ProcessRequestException("Unknown profile according to certificate Id");
@@ -60,10 +74,11 @@ public class ProcessCertification {
                     certReqMsg.getCertReq().getCertTemplate().getSubject(),
                     certReqMsg.getCertReq().getCertTemplate().getPublicKey());
 
-            for (ASN1ObjectIdentifier oid: certReqMsg.getCertReq().getCertTemplate().getExtensions().getExtensionOIDs()) {
-                Extension extension = certificateProfile.getExtension(certReqMsg.getCertReq().getCertTemplate().getExtensions().getExtension(oid));
-                x509v3CertificateBuilder.addExtension(extension.getExtnId(), extension.isCritical(), extension.getExtnValue());
-            }
+//            for (ASN1ObjectIdentifier oid: certReqMsg.getCertReq().getCertTemplate().getExtensions().getExtensionOIDs()) {
+//                Extension extension = certificateProfile.getCertificateProfile()
+//                    .validateExtension(oid, certReqMsg.getCertReq().getCertTemplate().getExtensions().getExtension(oid));
+//                x509v3CertificateBuilder.addExtension(extension.getExtnId(), extension.isCritical(), extension.getExtnValue());
+//            }
 
             X509CertificateHolder x509CertificateHolder = x509v3CertificateBuilder.build(sigGen);
 
@@ -74,9 +89,9 @@ public class ProcessCertification {
 
             return certResponse;
 
-        } catch (CertIOException e) {
-            throw new ProcessRequestException("Processing message error:" + e.getMessage());
-        }
+//        } catch (CertIOException e) {
+//            throw new ProcessRequestException("Processing message error:" + e.getMessage());
+//        }
     }
 
     /* public methods */
