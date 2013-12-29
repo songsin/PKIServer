@@ -1,0 +1,200 @@
+<?xml version="1.0"?>
+<Profiles>
+  <Profile ID="1" Name="Key Usage Some Overrule">
+    <Certificate>
+      <Validity>
+        <Minimum_Duration>365</Minimum_Duration>
+        <Maximum_Duration>731</Maximum_Duration>
+        <Not_Before Overrule="Yes">20130101000000</Not_Before>
+        <Not_After Overrule="Yes">20171231000000</Not_After>
+      </Validity>
+      <Key_Length/>
+      <Algorithm>SHA-1</Algorithm>
+      <Keys>Store Private Keys</Keys>
+      <Extensions>
+        <Authority_Key_Identifier>Subject Key Identifier</Authority_Key_Identifier>
+        <Subject_Key_Identifier>0100+LSB 60 bit SHA-1</Subject_Key_Identifier>
+        <Key_Usage>
+          <Signature>Enable</Signature>
+          <Non_Repudiation>Enable</Non_Repudiation>
+          <Data_Encipherment>Enable</Data_Encipherment>
+          <Key_Agreement>Enable</Key_Agreement>
+          <Encipherment_Only>Enable</Encipherment_Only>
+          <Decipherment_Only>Enable</Decipherment_Only>
+          <Key_Certificate_Signature>Enable</Key_Certificate_Signature>
+        </Key_Usage>
+        <Extended_Key_Usage>
+          <Server_Authentication>No Overrule</Server_Authentication>
+          <Client_Authentication>No Overrule</Client_Authentication>
+          <Code_Signing>No Overrule</Code_Signing>
+          <E_Mail_Protection>No Overrule</E_Mail_Protection>
+          <Time_Stamping>No Overrule</Time_Stamping>
+          <IPSec_End_System>No Overrule</IPSec_End_System>
+          <IPSec_Tunnel>No Overrule</IPSec_Tunnel>
+          <IPSec_User>No Overrule</IPSec_User>
+          <IKE_Intermediate>No Overrule</IKE_Intermediate>
+          <OCSP_Signing>No Overrule</OCSP_Signing>
+          <Smartcard_Logon>No Overrule</Smartcard_Logon>
+          <Key_Recovery_Agent>No Overrule</Key_Recovery_Agent>
+          <Drive_Encryption>No Overrule</Drive_Encryption>
+          <Drive_Recovery>No Overrule</Drive_Recovery>
+        </Extended_Key_Usage>
+      </Extensions>
+    </Certificate>
+    <PIN_Code>
+      <User_PIN/>
+      <Unblocking_PIN/>
+      <Master_PIN/>
+    </PIN_Code>
+    <CRL>
+      <Validity>
+        <Year>0</Year>
+        <Month>2</Month>
+        <Day>0</Day>
+        <Hour>0</Hour>
+        <Minute>0</Minute>
+        <Second>0</Second>
+      </Validity>
+      <Expiry_Date/>
+      <Update_Period/>
+      <Publication/>
+      <Extensions/>
+    </CRL>
+    <Publication/>
+    <Roles/>
+    <Key_Origin/>
+  </Profile>
+
+  <Profile ID="2" Name="Key Usage All No Overrule">
+    <Certificate>
+      <Validity>
+        <Minimum_Duration>365</Minimum_Duration>
+        <Maximum_Duration>731</Maximum_Duration>
+        <Not_Before Overrule="Yes">20130101000000</Not_Before>
+        <Not_After Overrule="Yes">20171231000000</Not_After>
+      </Validity>
+      <Key_Length/>
+      <Algorithm>SHA-1</Algorithm>
+      <Keys>Store Private Keys</Keys>
+      <Extensions>
+        <Authority_Key_Identifier>Subject Key Identifier</Authority_Key_Identifier>
+        <Subject_Key_Identifier>0100+LSB 60 bit SHA-1</Subject_Key_Identifier>
+        <Key_Usage>
+          <Signature>No Overrule</Signature>
+          <Non_Repudiation>No Overrule</Non_Repudiation>
+          <Key_Encipherment>No Overrule</Key_Encipherment>
+          <Data_Encipherment>No Overrule</Data_Encipherment>
+          <Key_Agreement>No Overrule</Key_Agreement>
+          <CRL_Signature>No Overrule</CRL_Signature>
+          <Encipherment_Only>No Overrule</Encipherment_Only>
+          <Decipherment_Only>No Overrule</Decipherment_Only>
+          <Key_Certificate_Signature>No Overrule</Key_Certificate_Signature>
+        </Key_Usage>
+        <Extended_Key_Usage>
+          <Server_Authentication>No Overrule</Server_Authentication>
+          <Client_Authentication>No Overrule</Client_Authentication>
+          <Code_Signing>No Overrule</Code_Signing>
+          <E_Mail_Protection>No Overrule</E_Mail_Protection>
+          <Time_Stamping>No Overrule</Time_Stamping>
+          <IPSec_End_System>No Overrule</IPSec_End_System>
+          <IPSec_Tunnel>No Overrule</IPSec_Tunnel>
+          <IPSec_User>No Overrule</IPSec_User>
+          <IKE_Intermediate>No Overrule</IKE_Intermediate>
+          <OCSP_Signing>No Overrule</OCSP_Signing>
+          <Smartcard_Logon>No Overrule</Smartcard_Logon>
+          <Key_Recovery_Agent>No Overrule</Key_Recovery_Agent>
+          <Drive_Encryption>No Overrule</Drive_Encryption>
+          <Drive_Recovery>No Overrule</Drive_Recovery>
+        </Extended_Key_Usage>
+      </Extensions>
+    </Certificate>
+    <PIN_Code>
+      <User_PIN/>
+      <Unblocking_PIN/>
+      <Master_PIN/>
+    </PIN_Code>
+    <CRL>
+      <Validity>
+        <Year>0</Year>
+        <Month>2</Month>
+        <Day>0</Day>
+        <Hour>0</Hour>
+        <Minute>0</Minute>
+        <Second>0</Second>
+      </Validity>
+      <Expiry_Date/>
+      <Update_Period/>
+      <Publication/>
+      <Extensions/>
+    </CRL>
+    <Publication/>
+    <Roles/>
+    <Key_Origin/>
+  </Profile>
+  <Profile ID="3" Name="Some Overrule Enabled">
+    <Certificate>
+      <Validity>
+        <Minimum_Duration>365</Minimum_Duration>
+        <Maximum_Duration>731</Maximum_Duration>
+        <Not_Before Overrule="Yes">20130101000000</Not_Before>
+        <Not_After Overrule="Yes">20171231000000</Not_After>
+      </Validity>
+      <Key_Length/>
+      <Algorithm>SHA-1</Algorithm>
+      <Keys>Store Private Keys</Keys>
+      <Extensions>
+        <Authority_Key_Identifier>Subject Key Identifier</Authority_Key_Identifier>
+        <Subject_Key_Identifier>0100+LSB 60 bit SHA-1</Subject_Key_Identifier>
+        <Key_Usage>
+          <Signature>No Overrule</Signature>
+          <Non_Repudiation>No Overrule</Non_Repudiation>
+          <Key_Encipherment>No Overrule</Key_Encipherment>
+          <Data_Encipherment>No Overrule</Data_Encipherment>
+          <Key_Agreement>No Overrule</Key_Agreement>
+          <CRL_Signature>Enable</CRL_Signature>
+          <Key_Certificate_Signature>Enable</Key_Certificate_Signature>
+        </Key_Usage>
+        <Extended_Key_Usage>
+          <Server_Authentication>No Overrule</Server_Authentication>
+          <Client_Authentication>No Overrule</Client_Authentication>
+          <Code_Signing>No Overrule</Code_Signing>
+          <E_Mail_Protection>No Overrule</E_Mail_Protection>
+          <Time_Stamping>No Overrule</Time_Stamping>
+          <IPSec_End_System>No Overrule</IPSec_End_System>
+          <IPSec_Tunnel>No Overrule</IPSec_Tunnel>
+          <IPSec_User>No Overrule</IPSec_User>
+          <IKE_Intermediate>No Overrule</IKE_Intermediate>
+          <OCSP_Signing>No Overrule</OCSP_Signing>
+          <Smartcard_Logon>No Overrule</Smartcard_Logon>
+          <Key_Recovery_Agent>No Overrule</Key_Recovery_Agent>
+          <Drive_Encryption>No Overrule</Drive_Encryption>
+          <Drive_Recovery>No Overrule</Drive_Recovery>
+        </Extended_Key_Usage>
+      </Extensions>
+    </Certificate>
+    <PIN_Code>
+      <User_PIN/>
+      <Unblocking_PIN/>
+      <Master_PIN/>
+    </PIN_Code>
+    <CRL>
+      <Validity>
+        <Year>0</Year>
+        <Month>2</Month>
+        <Day>0</Day>
+        <Hour>0</Hour>
+        <Minute>0</Minute>
+        <Second>0</Second>
+      </Validity>
+      <Expiry_Date/>
+      <Update_Period/>
+      <Publication/>
+      <Extensions/>
+    </CRL>
+    <Publication/>
+    <Roles/>
+    <Key_Origin/>
+  </Profile>
+</Profiles>
+
+

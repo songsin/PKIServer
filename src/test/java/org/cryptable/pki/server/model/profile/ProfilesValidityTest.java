@@ -217,19 +217,4 @@ public class ProfilesValidityTest {
 
     }
 
-    /**
-     * Test the keyLengths of the profile key length.
-     * <Key_Length>
-     *   <Minimum_Key_Length>2048</Minimum_Key_Length>
-     *   <Maximum_Key_Length>4096</Maximum_Key_Length>
-     * </Key_Length>
-     */
-    @Test
-    public void testCertificateKeyLengthValid()
-    {
-        Profile profile = profiles.get(3);
-        DateTime nBefore = new DateTime(2015, 1, 1, 0, 0, 0);
-        DateTime nAfter = new DateTime(2025, 12, 31, 23, 59, 59);
-
-    }
 }

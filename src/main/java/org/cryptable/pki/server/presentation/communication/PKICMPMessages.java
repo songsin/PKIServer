@@ -337,7 +337,7 @@ public class PKICMPMessages {
         CertReqMsg[] certReqMsgs = CertReqMessages.getInstance(pkiBody.getContent()).toCertReqMsgArray();
 
         CertReqMsg certReqMsg = certReqMsgs[0];
-        CertResponse certResponse = null;
+        CertResponse certResponse;
         if (certReqMsg.getCertReq().getCertTemplate().getPublicKey() == null) {
             certResponse = certifyWithKeyGeneration(certReqMsg.getCertReq());
         } else {

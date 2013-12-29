@@ -3,6 +3,7 @@ package org.cryptable.pki.server.model.profile;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.joda.time.DateTime;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ public interface Profile {
      * The Result object has the overruled or copied object. If invalid a String is return with
      * an error message
      *
-     * @param nBefore
+     * @param nBefore Begin date of the certificate
      * @return
      */
     public Result validateCertificateNBefore(DateTime nBefore) throws ProfileException;
@@ -28,17 +29,19 @@ public interface Profile {
      * The Result object has the overruled or copied object. If invalid a String is return with
      * an error message
      *
-     * @param nAfter
-     * @return
+     * @param nAfter End date of the certificate
+     * @return return a result object with a copy of the input if VALID, null when INVALID and
+     * a new value if overruled
      */
     public Result validateCertificateNAfter(DateTime nAfter) throws ProfileException;
 
     /**
      * Verify the lenth of the validity.
      *
-     * @param nBefore
-     * @param nAfter
-     * @return
+     * @param nBefore Begin date of the certificate
+     * @param nAfter End date of the certificate
+     * @return return a result object with a copy of the input if VALID, null when INVALID and
+     * a new value if overruled
      */
     public Result validateCertificateValidity(DateTime nBefore, DateTime nAfter) throws ProfileException;
 
@@ -47,8 +50,9 @@ public interface Profile {
      * The Result object has the overruled or copied object. If invalid a String is return with
      * an error message
      *
-     * @param keyLength
-     * @return
+     * @param keyLength requested keyLength
+     * @return return a result object with a copy of the input if VALID, null when INVALID and
+     * a new value if overruled
      */
     public Result validateCertificateKeyLength(Integer keyLength) throws ProfileException;
 
@@ -87,21 +91,21 @@ public interface Profile {
      * GOST3411WITHECGOST3410-2001
      * GOST3411WITHGOST3410-2001
      *
-     * @return
+     * @return Signing algorithm
      */
     public String getCertificateSignatureAlgorithm() throws ProfileException;
 
     /**
      * Private Key Escrow service of the CA
      *
-     * @return
+     * @return true if the private keys must be backed up
      */
     public boolean usePrivateKeyEscrow() throws ProfileException;
 
     /**
      * Get Publication delay. These are the number of milli-seconds before publication.
      *
-     * @return
+     * @return number of milliseconds to wait before publishing
      */
     public long certificatePublicationDelay() throws ProfileException;
 
@@ -110,9 +114,10 @@ public interface Profile {
      * the new or copied Extension will be stored in the result.
      * In case of invalid the result extension is null
      *
-     * @param extensions
-     * @return
+     * @param extensions list of extensions (Bouncycastle)
+     * @return returns a result list with the old and update extensions included when OVERRULED and VALID.
+     * Stops at the extension when INVALID extension is found
      */
-    public List<Result> validateCertificateExtensions(Extensions extensions);
+    public List<Result> validateCertificateExtensions(Extensions extensions) throws IOException;
 
 }

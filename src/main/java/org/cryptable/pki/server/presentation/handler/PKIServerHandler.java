@@ -76,8 +76,6 @@ public class PKIServerHandler extends ChannelInboundHandlerAdapter {
     		
             QueryStringDecoder queryStringDecoder = new QueryStringDecoder(fullHttpRequest.getUri());
 
-            String host = HttpHeaders.getHost(fullHttpRequest, "unknown");
-            String contentType = HttpHeaders.getHeader(fullHttpRequest, "Content-Type");
             HttpMethod method = fullHttpRequest.getMethod();
 
             if ((method == HttpMethod.POST) &&
@@ -145,7 +143,7 @@ public class PKIServerHandler extends ChannelInboundHandlerAdapter {
      * @param array
      */
     private byte[] processPKIMessage(byte[] array) {
-        byte[] result = null;
+        byte[] result;
 
         pkiKeyStore = PKIKeyStoreSingleton.getInstance();
 

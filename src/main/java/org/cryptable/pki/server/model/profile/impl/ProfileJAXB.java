@@ -1,8 +1,9 @@
 package org.cryptable.pki.server.model.profile.impl;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
-import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
-import org.bouncycastle.operator.DigestAlgorithmIdentifierFinder;
+import org.cryptable.pki.server.model.profile.ExtensionTemplate;
 import org.cryptable.pki.server.model.profile.Profile;
 import org.cryptable.pki.server.model.profile.ProfileException;
 import org.cryptable.pki.server.model.profile.Result;
@@ -11,13 +12,13 @@ import org.cryptable.pki.server.persistence.profile.jaxb.JAXBKeyLength;
 import org.cryptable.pki.server.persistence.profile.jaxb.JAXBProfile;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
-import org.joda.time.Interval;
 import org.joda.time.Period;
 import org.joda.time.format.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Author: davidtillemans
@@ -30,8 +31,11 @@ public class ProfileJAXB implements Profile {
 
     private JAXBProfile jaxbProfile;
 
+    final private HashMap<ASN1ObjectIdentifier, ExtensionTemplate> extensionTemplates = new HashMap<ASN1ObjectIdentifier, ExtensionTemplate>();
+
     public ProfileJAXB(JAXBProfile jaxbProfile) {
         this.jaxbProfile = jaxbProfile;
+        extensionTemplates.put(new ASN1ObjectIdentifier("2.5.29.15"), new KeyUsageJAXB(jaxbProfile.getCertificateProfile().getExtensions().getKeyUsage()));
     }
 
     @Override
@@ -46,12 +50,12 @@ public class ProfileJAXB implements Profile {
             if (date == null || (nBefore.getMillis() >= date.getDate().getMillis()) && !date.getOverrule()) {
                 logger.debug("Check Not Before [null|null|" + nBefore.toString() + "]");
                 result.setDecision(Result.Decisions.VALID);
-                result.setValue((Object)nBefore);
+                result.setValue(nBefore);
             }
             else if (date.getOverrule()) {
                 logger.debug("Check Not Before [" + date.getDate().toString() + "|" + date.getOverrule().toString() + "|" + nBefore.toString() + "]");
                 result.setDecision(Result.Decisions.OVERRULED);
-                result.setValue((Object)date.getDate());
+                result.setValue(date.getDate());
             }
             else {
                 logger.debug("Check Not Before [" + date.getDate().toString() + "|" + date.getOverrule().toString() + "|" + nBefore.toString() + "]");
@@ -79,12 +83,12 @@ public class ProfileJAXB implements Profile {
             if (date == null || (nAfter.getMillis() <= date.getDate().getMillis()) && !date.getOverrule()) {
                 logger.debug("Check Not After [null|null|" + nAfter.toString() + "]");
                 result.setDecision(Result.Decisions.VALID);
-                result.setValue((Object)nAfter);
+                result.setValue(nAfter);
             }
             else if (date.getOverrule()) {
                 logger.debug("Check Not After [" + date.getDate().toString() + "|" + date.getOverrule().toString() + "|" + nAfter.toString() + "]");
                 result.setDecision(Result.Decisions.OVERRULED);
-                result.setValue((Object)date.getDate());
+                result.setValue(date.getDate());
             }
             else {
                 logger.debug("Check Not After [" + date.getDate().toString() + "|" + date.getOverrule().toString() + "|" + nAfter.toString() + "]");
@@ -254,7 +258,24 @@ public class ProfileJAXB implements Profile {
     }
 
     @Override
-    public List<Result> validateCertificateExtensions(Extensions extensions) {
-        return null;
+    public List<Result> validateCertificateExtensions(Extensions extensions) throws IOException {
+        List<Result> results = new ArrayList<Result>();
+
+        // Validate the extensions
+        for (ASN1ObjectIdentifier oid : extensions.getExtensionOIDs()) {
+            ExtensionTemplate extensionTemplate = extensionTemplates.get(oid);
+            if (extensionTemplate != null)
+                results.add(extensionTemplate.validateExtension(extensions.getExtension(oid)));
+        }
+
+        // Add the missing extensions
+        for (Map.Entry<ASN1ObjectIdentifier, ExtensionTemplate> entry: extensionTemplates.entrySet()) {
+            Extension extension = extensions.getExtension(entry.getKey());
+
+            if (extension == null)
+                results.add(entry.getValue().getExtension());
+        }
+
+        return results;
     }
 }

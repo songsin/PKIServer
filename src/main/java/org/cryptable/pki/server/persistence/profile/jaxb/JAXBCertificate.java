@@ -48,7 +48,15 @@ public class JAXBCertificate {
     @XmlElement(name="Publication")
     protected String publication;
 
-    @XmlElement(name="extensions")
+    public JAXBCertificateExtensions getExtensions() {
+        return extensions;
+    }
+
+    public void setExtensions(JAXBCertificateExtensions extensions) {
+        this.extensions = extensions;
+    }
+
+    @XmlElement(name="Extensions")
     protected JAXBCertificateExtensions extensions;
 
     public JAXBCertificateValidity getCertificateValidityProfile() {
@@ -90,5 +98,6 @@ public class JAXBCertificate {
     public void setPublication(String publication) {
         this.publication = publication;
     }
+
 
 }
