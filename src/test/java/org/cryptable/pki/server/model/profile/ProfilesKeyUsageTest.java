@@ -1,6 +1,8 @@
 package org.cryptable.pki.server.model.profile;
 
 import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.crmf.CertTemplate;
+import org.bouncycastle.asn1.crmf.CertTemplateBuilder;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.KeyUsage;
@@ -10,6 +12,10 @@ import org.junit.Test;
 
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.RSAPrivateCrtKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -23,6 +29,7 @@ import static org.junit.Assert.assertTrue;
 public class ProfilesKeyUsageTest {
 
     static private Profiles profiles;
+    private CertTemplateBuilder certTemplateBuilder = new CertTemplateBuilder();
 
     @Before
     public void setup() throws JAXBException, IOException, ProfileException {
@@ -46,14 +53,18 @@ public class ProfilesKeyUsageTest {
      * </Key_Usage>
      */
     @Test
-    public void testCertificateKeyUsageValid() throws ProfileException, IOException {
+    public void testCertificateKeyUsageValid() throws ProfileException, IOException, NoSuchAlgorithmException {
         Profile profile = profiles.get(2);
         Extension extension = new Extension(Extension.keyUsage,
             true,
             new DEROctetString(new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyEncipherment | KeyUsage.dataEncipherment)));
         Extensions extensions = new Extensions(extension);
 
-        List<Result> results = profile.validateCertificateExtensions(extensions);
+        CertTemplate certTemplate = certTemplateBuilder
+            .setExtensions(extensions)
+            .build();
+
+        List<Result> results = profile.validateCertificateExtensions(certTemplate);
         Result result = results.get(0);
         Extension ext = (Extension) result.getValue();
 
@@ -81,14 +92,18 @@ public class ProfilesKeyUsageTest {
      * </Key_Usage>
      */
     @Test
-    public void testCertificateKeyUsageOverruled() throws ProfileException, IOException {
+    public void testCertificateKeyUsageOverruled() throws ProfileException, IOException, NoSuchAlgorithmException {
         Profile profile = profiles.get(1);
         Extension extension = new Extension(Extension.keyUsage,
             true,
             new DEROctetString(new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyEncipherment | KeyUsage.dataEncipherment)));
         Extensions extensions = new Extensions(extension);
 
-        List<Result> results = profile.validateCertificateExtensions(extensions);
+        CertTemplate certTemplate = certTemplateBuilder
+            .setExtensions(extensions)
+            .build();
+
+        List<Result> results = profile.validateCertificateExtensions(certTemplate);
         Result result = results.get(0);
         Extension ext = (Extension) result.getValue();
 

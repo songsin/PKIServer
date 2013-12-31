@@ -155,7 +155,7 @@ public class GeneratePKI {
         return testUser4CertPrivateKey;
     }
 
-    private List<Certificate> certificateChain;
+    private final List<Certificate> certificateChain;
 
     public Certificate[] getCertificateChain() {
         return certificateChain.toArray(new Certificate[certificateChain.size()]);
@@ -455,7 +455,7 @@ public class GeneratePKI {
     private static X509CRL createCRL(
             PrivateKey      privKey,
             X509Certificate caCert,
-            BigInteger      serNum) throws OperatorCreationException, CertificateException, CRLException {
+            BigInteger      serNum) throws OperatorCreationException, CRLException {
         // Signer of the certificate
         ContentSigner sigGen = new JcaContentSignerBuilder("SHA256WithRSAEncryption").setProvider(BC).build(privKey);
         // Builder of the certificate
@@ -731,13 +731,15 @@ public class GeneratePKI {
 
     public String storeJKS() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
         String fileName = "keystore.jks";
+        FileOutputStream fileOutputStream = new FileOutputStream(fileName);;
+
         KeyStore keyStore = KeyStore.getInstance("JKS");
         keyStore.load(null, null);
         keyStore.setKeyEntry("COMM", subCACertPrivateKey, "ca-system".toCharArray(), commChain.toArray(new Certificate[certificateChain.size()]));
         keyStore.setKeyEntry("CA", subCACertPrivateKey, "ca-system".toCharArray(), certificateChain.toArray(new Certificate[certificateChain.size()]));
         keyStore.setCertificateEntry("RA", raCert);
-        FileOutputStream fileOutputStream = new FileOutputStream(fileName);
         keyStore.store(fileOutputStream, "system".toCharArray());
+        fileOutputStream.close();
 
         return fileName;
     }

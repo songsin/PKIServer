@@ -1,6 +1,7 @@
 package org.cryptable.pki.server.persistence.profile.jaxb;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -13,9 +14,9 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * Date: 27/12/13
  * Hour: 23:03
  */
-public class DateAdapter extends XmlAdapter<String, DateTime> {
+class DateAdapter extends XmlAdapter<String, DateTime> {
 
-    private DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyyMMddHHmmss");
+    private final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyyMMddHHmmss").withZoneUTC();
 
     @Override
     public String marshal(DateTime v) throws Exception {

@@ -11,5 +11,5 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="CERTIFICATE")
-public class Certificate {
+class Certificate {
 }

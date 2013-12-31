@@ -40,6 +40,7 @@ import javax.xml.bind.annotation.XmlElement;
  * Date: 28/12/13
  * Hour: 10:43
  */
+@SuppressWarnings("ALL")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JAXBCertificateExtensions {
 

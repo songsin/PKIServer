@@ -27,10 +27,10 @@ public class ProfilesJAXB implements Profiles {
 
     final Logger logger = LoggerFactory.getLogger(ProfilesJAXB.class);
 
-    private HashMap<Integer, Profile> profilesIDs = new HashMap<Integer, Profile>();
-    private HashMap<String, Profile> profilesNames = new HashMap<String, Profile>();
+    private final HashMap<Integer, Profile> profilesIDs = new HashMap<Integer, Profile>();
+    private final HashMap<String, Profile> profilesNames = new HashMap<String, Profile>();
 
-    private void init(InputStream inputStream) throws JAXBException, IOException, ProfileException {
+    private void init(InputStream inputStream) throws JAXBException, ProfileException {
         JAXBContext jaxbContext = JAXBContext.newInstance(JAXBProfiles.class);
 
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -59,7 +59,7 @@ public class ProfilesJAXB implements Profiles {
         }
     }
 
-    public ProfilesJAXB() throws JAXBException, IOException, ProfileException {
+    public ProfilesJAXB() {
     }
 
     public ProfilesJAXB(InputStream inputStream) throws JAXBException, ProfileException, IOException {
@@ -71,11 +71,8 @@ public class ProfilesJAXB implements Profiles {
         logger.debug(fileName);
 
         FileInputStream fis = new FileInputStream(fileName);
-        try {
-            init(new FileInputStream(fileName));
-        } finally {
-            fis.close();
-        }
+        init(fis);
+        fis.close();
     }
 
     @Override

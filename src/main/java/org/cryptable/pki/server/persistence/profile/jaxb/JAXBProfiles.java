@@ -17,7 +17,7 @@ import java.util.List;
 public class JAXBProfiles {
 
     @XmlElement(name = "Profile", type = JAXBProfile.class)
-    protected List<JAXBProfile> profiles = new ArrayList<JAXBProfile>();
+    private List<JAXBProfile> profiles = new ArrayList<JAXBProfile>();
 
     public List<JAXBProfile> getProfiles() {
         return profiles;

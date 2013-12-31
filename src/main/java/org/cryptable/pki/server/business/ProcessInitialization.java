@@ -28,7 +28,7 @@ public class ProcessInitialization {
 
     final Logger logger = LoggerFactory.getLogger(ProcessInitialization.class);
 
-    private PKIKeyStore pkiKeyStore;
+    private final PKIKeyStore pkiKeyStore;
 
     public ProcessInitialization(PKIKeyStore pkiKeyStore) {
         this.pkiKeyStore = pkiKeyStore;

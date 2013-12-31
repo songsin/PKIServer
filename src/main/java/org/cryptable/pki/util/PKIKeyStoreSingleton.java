@@ -17,10 +17,9 @@ import java.security.cert.Certificate;
  */
 public class PKIKeyStoreSingleton {
 
-    static private PKIKeyStore pkiKeyStore;
+    static private PKIKeyStore pkiKeyStore = null;
 
     private PKIKeyStoreSingleton() {
-        pkiKeyStore = null;
     }
 
     static public void init(Key senderPrivateKey,

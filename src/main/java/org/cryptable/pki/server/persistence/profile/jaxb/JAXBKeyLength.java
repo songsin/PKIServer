@@ -19,10 +19,10 @@ import javax.xml.bind.annotation.XmlElement;
 public class JAXBKeyLength {
 
     @XmlElement(name="Minimum_Key_Length")
-    protected Integer minimumKeyLength;
+    private Integer minimumKeyLength;
 
     @XmlElement(name="Maximum_Key_Length")
-    protected Integer maximumKeyLength;
+    private Integer maximumKeyLength;
 
     public Integer getMinimumKeyLength() {
         return minimumKeyLength;

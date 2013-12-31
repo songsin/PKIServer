@@ -11,10 +11,10 @@ import javax.xml.bind.annotation.*;
 public class JAXBKeyOrigin {
 
     @XmlAttribute
-    protected String selectable;
+    private String selectable;
 
     @XmlValue
-    protected String keyOrigin;
+    private String keyOrigin;
 
     public String getSelectable() {
         return selectable;

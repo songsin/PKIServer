@@ -58,14 +58,9 @@ public class PKIServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
 
 		FullHttpResponse out = null;
-
-		try {
-			out = messageReceived(ctx, msg);
-
-		} finally {
-			ctx.write(out);
-            ctx.flush();
-		}
+        out = messageReceived(ctx, msg);
+        ctx.write(out);
+        ctx.flush();
 	}
 
 

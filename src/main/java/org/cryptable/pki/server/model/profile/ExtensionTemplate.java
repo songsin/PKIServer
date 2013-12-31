@@ -5,6 +5,7 @@ import org.bouncycastle.asn1.x509.Extension;
 import org.cryptable.pki.server.model.profile.Result;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Author: davidtillemans
@@ -26,14 +27,14 @@ public interface ExtensionTemplate {
      * @param extension
      * @return
      */
-    Result validateExtension(Extension extension) throws IOException;
+    Result validateExtension(Extension extension) throws IOException, NoSuchAlgorithmException;
 
     /**
      * Returns the extension
      *
      * @return
      */
-    Result getExtension() throws IOException;
+    Result getExtension() throws IOException, NoSuchAlgorithmException;
 
     /**
      * Returns the criticality of the extension

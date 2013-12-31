@@ -34,19 +34,19 @@ import java.util.Date;
 public class JAXBCertificate {
 
     @XmlElement(name="Validity")
-    protected JAXBCertificateValidity certificateValidityProfile;
+    private JAXBCertificateValidity certificateValidityProfile;
 
     @XmlElement(name="Key_Length")
-    protected JAXBKeyLength keyLengthProfile;
+    private JAXBKeyLength keyLengthProfile;
 
     @XmlElement(name="Algorithm")
-    protected String algorithm;
+    private String algorithm;
 
     @XmlElement(name="Keys")
-    protected String keys;
+    private String keys;
 
     @XmlElement(name="Publication")
-    protected String publication;
+    private String publication;
 
     public JAXBCertificateExtensions getExtensions() {
         return extensions;
@@ -57,7 +57,7 @@ public class JAXBCertificate {
     }
 
     @XmlElement(name="Extensions")
-    protected JAXBCertificateExtensions extensions;
+    private JAXBCertificateExtensions extensions;
 
     public JAXBCertificateValidity getCertificateValidityProfile() {
         return certificateValidityProfile;

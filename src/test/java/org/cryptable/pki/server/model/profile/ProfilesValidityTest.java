@@ -1,7 +1,12 @@
 package org.cryptable.pki.server.model.profile;
 
+import org.bouncycastle.asn1.crmf.CertTemplate;
+import org.bouncycastle.asn1.crmf.CertTemplateBuilder;
+import org.bouncycastle.asn1.crmf.OptionalValidity;
+import org.bouncycastle.asn1.x509.Time;
 import org.cryptable.pki.server.model.profile.impl.ProfilesJAXB;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,6 +24,7 @@ import static org.junit.Assert.*;
 public class ProfilesValidityTest {
 
     static private Profiles profiles = null;
+    private CertTemplateBuilder certTemplateBuilder = new CertTemplateBuilder();
 
     @Before
     public void setup() throws JAXBException, IOException, ProfileException, ClassNotFoundException {
@@ -33,12 +39,16 @@ public class ProfilesValidityTest {
     public void testCertificateValidity1() throws ProfileException, JAXBException, IOException {
 
         Profile profile = profiles.get(1);
-        DateTime nBefore = new DateTime(2013, 1, 1, 0, 0, 0);
-        DateTime nAfter = new DateTime(2015, 12, 31, 23, 59, 59);
+        DateTime nBefore = new DateTime(2013, 1, 1, 0, 0, 0, DateTimeZone.UTC);
+        DateTime nAfter = new DateTime(2015, 12, 31, 23, 59, 59, DateTimeZone.UTC);
 
-        Result result1 = profile.validateCertificateNBefore(nBefore);
-        Result result2 = profile.validateCertificateNAfter(nAfter);
-        Result result3 = profile.validateCertificateValidity(nBefore, nAfter);
+        CertTemplate certTemplate = certTemplateBuilder
+            .setValidity(new OptionalValidity(new Time(nBefore.toDate()), new Time(nAfter.toDate())))
+            .build();
+
+        Result result1 = profile.validateCertificateNBefore(certTemplate);
+        Result result2 = profile.validateCertificateNAfter(certTemplate);
+        Result result3 = profile.validateCertificateValidity(certTemplate);
 
         assertEquals(Result.Decisions.VALID, result1.getDecision());
         assertEquals(Result.Decisions.VALID, result2.getDecision());
@@ -53,12 +63,16 @@ public class ProfilesValidityTest {
     public void testCertificateInValidityNBefore() throws JAXBException, IOException, ProfileException {
 
         Profile profile = profiles.get(1);
-        DateTime nBefore = new DateTime(2009, 1, 1, 0, 0, 0);
-        DateTime nAfter = new DateTime(2015, 12, 31, 23, 59, 59);
+        DateTime nBefore = new DateTime(2009, 1, 1, 0, 0, 0, DateTimeZone.UTC);
+        DateTime nAfter = new DateTime(2015, 12, 31, 23, 59, 59, DateTimeZone.UTC);
 
-        Result result1 = profile.validateCertificateNBefore(nBefore);
-        Result result2 = profile.validateCertificateNAfter(nAfter);
-        Result result3 = profile.validateCertificateValidity(nBefore, nAfter);
+        CertTemplate certTemplate = certTemplateBuilder
+            .setValidity(new OptionalValidity(new Time(nBefore.toDate()), new Time(nAfter.toDate())))
+            .build();
+
+        Result result1 = profile.validateCertificateNBefore(certTemplate);
+        Result result2 = profile.validateCertificateNAfter(certTemplate);
+        Result result3 = profile.validateCertificateValidity(certTemplate);
 
         assertEquals(Result.Decisions.INVALID, result1.getDecision());
         assertEquals(Result.Decisions.VALID, result2.getDecision());
@@ -73,12 +87,16 @@ public class ProfilesValidityTest {
     public void testCertificateInValidityNAfter() throws JAXBException, IOException, ProfileException {
 
         Profile profile = profiles.get(1);
-        DateTime nBefore = new DateTime(2025, 1, 1, 0, 0, 0);
-        DateTime nAfter = new DateTime(2034, 12, 31, 23, 59, 59);
+        DateTime nBefore = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeZone.UTC);
+        DateTime nAfter = new DateTime(2034, 12, 31, 23, 59, 59, DateTimeZone.UTC);
 
-        Result result1 = profile.validateCertificateNBefore(nBefore);
-        Result result2 = profile.validateCertificateNAfter(nAfter);
-        Result result3 = profile.validateCertificateValidity(nBefore, nAfter);
+        CertTemplate certTemplate = certTemplateBuilder
+            .setValidity(new OptionalValidity(new Time(nBefore.toDate()), new Time(nAfter.toDate())))
+            .build();
+
+        Result result1 = profile.validateCertificateNBefore(certTemplate);
+        Result result2 = profile.validateCertificateNAfter(certTemplate);
+        Result result3 = profile.validateCertificateValidity(certTemplate);
 
         assertEquals(Result.Decisions.VALID, result1.getDecision());
         assertEquals(Result.Decisions.INVALID, result2.getDecision());
@@ -93,12 +111,16 @@ public class ProfilesValidityTest {
     public void testCertificateInValidityMinimum() throws JAXBException, IOException, ProfileException {
 
         Profile profile = profiles.get(1);
-        DateTime nBefore = new DateTime(2025, 1, 1, 0, 0, 0);
-        DateTime nAfter = new DateTime(2025, 12, 31, 23, 59, 59);
+        DateTime nBefore = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeZone.UTC);
+        DateTime nAfter = new DateTime(2025, 12, 31, 23, 59, 59, DateTimeZone.UTC);
 
-        Result result1 = profile.validateCertificateNBefore(nBefore);
-        Result result2 = profile.validateCertificateNAfter(nAfter);
-        Result result3 = profile.validateCertificateValidity(nBefore, nAfter);
+        CertTemplate certTemplate = certTemplateBuilder
+            .setValidity(new OptionalValidity(new Time(nBefore.toDate()), new Time(nAfter.toDate())))
+            .build();
+
+        Result result1 = profile.validateCertificateNBefore(certTemplate);
+        Result result2 = profile.validateCertificateNAfter(certTemplate);
+        Result result3 = profile.validateCertificateValidity(certTemplate);
 
         assertEquals(Result.Decisions.VALID, result1.getDecision());
         assertEquals(Result.Decisions.VALID, result2.getDecision());
@@ -114,12 +136,16 @@ public class ProfilesValidityTest {
     public void testCertificateInValidityMaximum() throws JAXBException, IOException, ProfileException {
 
         Profile profile = profiles.get(1);
-        DateTime nBefore = new DateTime(2015, 1, 1, 0, 0, 0);
-        DateTime nAfter = new DateTime(2025, 12, 31, 23, 59, 59);
+        DateTime nBefore = new DateTime(2015, 1, 1, 0, 0, 0, DateTimeZone.UTC);
+        DateTime nAfter = new DateTime(2025, 12, 31, 23, 59, 59, DateTimeZone.UTC);
 
-        Result result1 = profile.validateCertificateNBefore(nBefore);
-        Result result2 = profile.validateCertificateNAfter(nAfter);
-        Result result3 = profile.validateCertificateValidity(nBefore, nAfter);
+        CertTemplate certTemplate = certTemplateBuilder
+            .setValidity(new OptionalValidity(new Time(nBefore.toDate()), new Time(nAfter.toDate())))
+            .build();
+
+        Result result1 = profile.validateCertificateNBefore(certTemplate);
+        Result result2 = profile.validateCertificateNAfter(certTemplate);
+        Result result3 = profile.validateCertificateValidity(certTemplate);
 
         assertEquals(Result.Decisions.VALID, result1.getDecision());
         assertEquals(Result.Decisions.VALID, result2.getDecision());
@@ -137,17 +163,21 @@ public class ProfilesValidityTest {
     public void testCertificateValidityOverrule() throws JAXBException, IOException, ProfileException {
 
         Profile profile = profiles.get(4);
-        DateTime nBefore = new DateTime(2015, 1, 1, 0, 0, 0);
-        DateTime nAfter = new DateTime(2025, 12, 31, 23, 59, 59);
+        DateTime nBefore = new DateTime(2015, 1, 1, 0, 0, 0, DateTimeZone.UTC);
+        DateTime nAfter = new DateTime(2025, 12, 31, 23, 59, 59, DateTimeZone.UTC);
 
-        Result result1 = profile.validateCertificateNBefore(nBefore);
-        Result result2 = profile.validateCertificateNAfter(nAfter);
-        Result result3 = profile.validateCertificateValidity(nBefore, nAfter);
+        CertTemplate certTemplate = certTemplateBuilder
+            .setValidity(new OptionalValidity(new Time(nBefore.toDate()), new Time(nAfter.toDate())))
+            .build();
+
+        Result result1 = profile.validateCertificateNBefore(certTemplate);
+        Result result2 = profile.validateCertificateNAfter(certTemplate);
+        Result result3 = profile.validateCertificateValidity(certTemplate);
 
         assertEquals(Result.Decisions.OVERRULED, result1.getDecision());
-        assertEquals(new DateTime(2013, 1, 1, 0, 0, 0), result1.getValue());
+        assertEquals(new DateTime(2013, 1, 1, 0, 0, 0, DateTimeZone.UTC), result1.getValue());
         assertEquals(Result.Decisions.OVERRULED, result2.getDecision());
-        assertEquals(new DateTime(2017, 12, 31, 0, 0, 0), result2.getValue());
+        assertEquals(new DateTime(2017, 12, 31, 0, 0, 0, DateTimeZone.UTC), result2.getValue());
         assertEquals(Result.Decisions.OVERRULED, result3.getDecision());
 
     }
@@ -159,17 +189,21 @@ public class ProfilesValidityTest {
     public void testCertificateValidityEmptyMinimumMaximum() throws JAXBException, IOException, ProfileException {
 
         Profile profile = profiles.get(2);
-        DateTime nBefore = new DateTime(2015, 1, 1, 0, 0, 0);
-        DateTime nAfter = new DateTime(2017, 12, 31, 23, 59, 59);
+        DateTime nBefore = new DateTime(2015, 1, 1, 0, 0, 0, DateTimeZone.UTC);
+        DateTime nAfter = new DateTime(2017, 12, 31, 23, 59, 59, DateTimeZone.UTC);
 
-        Result result1 = profile.validateCertificateNBefore(nBefore);
-        Result result2 = profile.validateCertificateNAfter(nAfter);
-        Result result3 = profile.validateCertificateValidity(nBefore, nAfter);
+        CertTemplate certTemplate = certTemplateBuilder
+            .setValidity(new OptionalValidity(new Time(nBefore.toDate()), new Time(nAfter.toDate())))
+            .build();
+
+        Result result1 = profile.validateCertificateNBefore(certTemplate);
+        Result result2 = profile.validateCertificateNAfter(certTemplate);
+        Result result3 = profile.validateCertificateValidity(certTemplate);
 
         assertEquals(Result.Decisions.VALID, result1.getDecision());
-        assertEquals(new DateTime(2015, 1, 1, 0, 0, 0), result1.getValue());
+        assertEquals(new DateTime(2015, 1, 1, 0, 0, 0, DateTimeZone.UTC), result1.getValue());
         assertEquals(Result.Decisions.VALID, result2.getDecision());
-        assertEquals(new DateTime(2017, 12, 31, 23, 59, 59), result2.getValue());
+        assertEquals(new DateTime(2017, 12, 31, 23, 59, 59, DateTimeZone.UTC), result2.getValue());
         assertEquals(Result.Decisions.VALID, result3.getDecision());
     }
 
@@ -180,17 +214,21 @@ public class ProfilesValidityTest {
     public void testCertificateValidityEmptyNBeforeNAfter() throws JAXBException, IOException, ProfileException {
 
         Profile profile = profiles.get(3);
-        DateTime nBefore = new DateTime(2015, 1, 1, 0, 0, 0);
-        DateTime nAfter = new DateTime(2016, 12, 31, 23, 59, 59);
+        DateTime nBefore = new DateTime(2015, 1, 1, 0, 0, 0, DateTimeZone.UTC);
+        DateTime nAfter = new DateTime(2016, 12, 31, 23, 59, 59, DateTimeZone.UTC);
 
-        Result result1 = profile.validateCertificateNBefore(nBefore);
-        Result result2 = profile.validateCertificateNAfter(nAfter);
-        Result result3 = profile.validateCertificateValidity(nBefore, nAfter);
+        CertTemplate certTemplate = certTemplateBuilder
+            .setValidity(new OptionalValidity(new Time(nBefore.toDate()), new Time(nAfter.toDate())))
+            .build();
+
+        Result result1 = profile.validateCertificateNBefore(certTemplate);
+        Result result2 = profile.validateCertificateNAfter(certTemplate);
+        Result result3 = profile.validateCertificateValidity(certTemplate);
 
         assertEquals(Result.Decisions.VALID, result1.getDecision());
-        assertEquals(new DateTime(2015, 1, 1, 0, 0, 0), result1.getValue());
+        assertEquals(new DateTime(2015, 1, 1, 0, 0, 0, DateTimeZone.UTC), result1.getValue());
         assertEquals(Result.Decisions.VALID, result2.getDecision());
-        assertEquals(new DateTime(2016, 12, 31, 23, 59, 59), result2.getValue());
+        assertEquals(new DateTime(2016, 12, 31, 23, 59, 59, DateTimeZone.UTC), result2.getValue());
         assertEquals(Result.Decisions.VALID, result3.getDecision());
 
     }
@@ -202,17 +240,21 @@ public class ProfilesValidityTest {
     public void testCertificateValidityEmptyNBeforeNAfterInvalidMaximum() throws JAXBException, IOException, ProfileException {
 
         Profile profile = profiles.get(3);
-        DateTime nBefore = new DateTime(2015, 1, 1, 0, 0, 0);
-        DateTime nAfter = new DateTime(2025, 12, 31, 23, 59, 59);
+        DateTime nBefore = new DateTime(2015, 1, 1, 0, 0, 0, DateTimeZone.UTC);
+        DateTime nAfter = new DateTime(2025, 12, 31, 23, 59, 59, DateTimeZone.UTC);
 
-        Result result1 = profile.validateCertificateNBefore(nBefore);
-        Result result2 = profile.validateCertificateNAfter(nAfter);
-        Result result3 = profile.validateCertificateValidity(nBefore, nAfter);
+        CertTemplate certTemplate = certTemplateBuilder
+            .setValidity(new OptionalValidity(new Time(nBefore.toDate()), new Time(nAfter.toDate())))
+            .build();
+
+        Result result1 = profile.validateCertificateNBefore(certTemplate);
+        Result result2 = profile.validateCertificateNAfter(certTemplate);
+        Result result3 = profile.validateCertificateValidity(certTemplate);
 
         assertEquals(Result.Decisions.VALID, result1.getDecision());
-        assertEquals(new DateTime(2015, 1, 1, 0, 0, 0), result1.getValue());
+        assertEquals(new DateTime(2015, 1, 1, 0, 0, 0, DateTimeZone.UTC), result1.getValue());
         assertEquals(Result.Decisions.VALID, result2.getDecision());
-        assertEquals(new DateTime(2025, 12, 31, 23, 59, 59), result2.getValue());
+        assertEquals(new DateTime(2025, 12, 31, 23, 59, 59, DateTimeZone.UTC), result2.getValue());
         assertEquals(Result.Decisions.INVALID, result3.getDecision());
 
     }

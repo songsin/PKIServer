@@ -47,7 +47,7 @@ import java.util.List;
  */
 public class PKIKeyStore {
 
-    final Logger logger = LoggerFactory.getLogger(PKIKeyStore.class);
+    private final Logger logger = LoggerFactory.getLogger(PKIKeyStore.class);
 
     private String provider;
 
@@ -69,7 +69,7 @@ public class PKIKeyStore {
 
     private X509CRL x509CRL;
 
-    private void init(String provider, String securePRNG) throws NoSuchProviderException, NoSuchAlgorithmException {
+    private void init(String provider, String securePRNG) throws NoSuchAlgorithmException {
         x509CRL = null;
         byte[] seed = SecureRandom.getInstance(securePRNG).generateSeed(64);
         this.provider = provider;

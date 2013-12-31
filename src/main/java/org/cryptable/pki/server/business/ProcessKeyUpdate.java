@@ -29,7 +29,7 @@ public class ProcessKeyUpdate {
     final Logger logger = LoggerFactory.getLogger(ProcessKeyUpdate.class);
 
     private CertReqMsg[] certReqMsgs;
-    private PKIKeyStore pkiKeyStore;
+    private final PKIKeyStore pkiKeyStore;
 
     public ProcessKeyUpdate(PKIKeyStore pkiKeyStore) {
         this.pkiKeyStore = pkiKeyStore;

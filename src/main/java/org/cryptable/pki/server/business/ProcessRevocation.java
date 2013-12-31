@@ -29,7 +29,7 @@ public class ProcessRevocation {
     final Logger logger = LoggerFactory.getLogger(ProcessRevocation.class);
 
     private CertReqMsg[] certReqMsgs;
-    PKIKeyStore pkiKeyStore;
+    final private PKIKeyStore pkiKeyStore;
 
     public ProcessRevocation(PKIKeyStore pkiKeyStore) {
         this.pkiKeyStore = pkiKeyStore;

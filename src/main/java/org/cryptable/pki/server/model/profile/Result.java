@@ -10,7 +10,7 @@ public class Result {
         OVERRULED,
         INVALID,
         VALID
-    };
+    }
 
     private Decisions decision;
 

@@ -27,31 +27,31 @@ import javax.xml.bind.annotation.XmlElement;
 public class JAXBKeyUsage {
 
     @XmlElement(name="Signature")
-    protected String signature;
+    private String signature;
 
     @XmlElement(name="Non_Repudiation")
-    protected String nonRepudiation;
+    private String nonRepudiation;
 
     @XmlElement(name="Key_Encipherment")
-    protected String keyEncipherment;
+    private String keyEncipherment;
 
     @XmlElement(name="Data_Encipherment")
-    protected String dataEncipherment;
+    private String dataEncipherment;
 
     @XmlElement(name="Key_Agreement")
-    protected String keyAgreement;
+    private String keyAgreement;
 
     @XmlElement(name="CRL_Signature")
-    protected String crlSignature;
+    private String crlSignature;
 
     @XmlElement(name="Encipherment_Only")
-    protected String enciphermentOnly;
+    private String enciphermentOnly;
 
     @XmlElement(name="Decipherment_Only")
-    protected String deciphermentOnly;
+    private String deciphermentOnly;
 
     @XmlElement(name="Key_Certificate_Signature")
-    protected String keyCertificateSignature;
+    private String keyCertificateSignature;
 
     public String getSignature() {
         return signature;

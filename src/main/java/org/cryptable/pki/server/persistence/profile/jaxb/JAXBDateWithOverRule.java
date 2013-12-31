@@ -17,11 +17,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public class JAXBDateWithOverRule {
     @XmlAttribute(name="Overrule")
     @XmlJavaTypeAdapter(BooleanAdapter.class)
-    protected Boolean overrule;
+    private Boolean overrule;
 
     @XmlValue
     @XmlJavaTypeAdapter(DateAdapter.class)
-    protected DateTime date;
+    private DateTime date;
 
     public Boolean getOverrule() {
         return overrule;

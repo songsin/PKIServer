@@ -7,7 +7,7 @@ package org.cryptable.pki.server.business;
  * Date: 12/22/13
  * Time: 10:23 PM
  */
-public class ProcessRequestException extends Throwable {
+public class ProcessRequestException extends Exception {
     public ProcessRequestException(String s) {
         super(s);
     }

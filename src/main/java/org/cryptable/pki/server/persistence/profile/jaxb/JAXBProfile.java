@@ -41,28 +41,28 @@ import javax.xml.bind.annotation.*;
 public class JAXBProfile {
 
     @XmlAttribute(name="ID")
-    protected int id;
+    private int id;
 
     @XmlAttribute(name="Name")
-    protected String name;
+    private String name;
 
     @XmlElement(name="Certificate")
-    protected JAXBCertificate certificateProfile;
+    private JAXBCertificate certificateProfile;
 
     @XmlElement(name="PIN_Code")
-    protected JAXBPINcode pinCodeProfile;
+    private JAXBPINcode pinCodeProfile;
 
     @XmlElement(name="CRL")
-    protected JAXBCRL crlProfile;
+    private JAXBCRL crlProfile;
 
     @XmlElement(name="Publication")
-    protected JAXBPublication publicationProfile;
+    private JAXBPublication publicationProfile;
 
     @XmlElement(name="Roles")
-    protected JAXBRoles rolesProfile;
+    private JAXBRoles rolesProfile;
 
     @XmlElement(name="Key_Origin")
-    protected JAXBKeyOrigin keyOriginProfile;
+    private JAXBKeyOrigin keyOriginProfile;
 
     public int getId() {
         return id;

@@ -153,7 +153,7 @@ public class PKICMPMessages {
         this.optionalValidity = new OptionalValidity(new Time(notBefore), new Time(notAfter));
     }
 
-    private byte[] createProtectedPKIMessage(PKIBody pkiBody) throws CMPException, OperatorCreationException, IOException, CertificateEncodingException, PKICMPMessageException {
+    private byte[] createProtectedPKIMessage(PKIBody pkiBody) throws CMPException, OperatorCreationException, IOException, CertificateEncodingException {
 
         senderNonce = new byte[TRANSACTIONID_SIZE];
 

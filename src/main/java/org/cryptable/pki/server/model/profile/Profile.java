@@ -1,9 +1,12 @@
 package org.cryptable.pki.server.model.profile;
 
+import org.bouncycastle.asn1.crmf.CertTemplate;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
 import java.util.List;
 
 /**
@@ -19,42 +22,41 @@ public interface Profile {
      * The Result object has the overruled or copied object. If invalid a String is return with
      * an error message
      *
-     * @param nBefore Begin date of the certificate
+     * @param certTemplate template of the certificate extensions (Bouncycastle)
      * @return
      */
-    public Result validateCertificateNBefore(DateTime nBefore) throws ProfileException;
+    public Result validateCertificateNBefore(CertTemplate certTemplate) throws ProfileException;
 
     /**
      * Verify the validity of the NAfter. Returns a result object, because it can be overruled.
      * The Result object has the overruled or copied object. If invalid a String is return with
      * an error message
      *
-     * @param nAfter End date of the certificate
+     * @param certTemplate template of the certificate extensions (Bouncycastle)
      * @return return a result object with a copy of the input if VALID, null when INVALID and
      * a new value if overruled
      */
-    public Result validateCertificateNAfter(DateTime nAfter) throws ProfileException;
+    public Result validateCertificateNAfter(CertTemplate certTemplate) throws ProfileException;
 
     /**
      * Verify the lenth of the validity.
      *
-     * @param nBefore Begin date of the certificate
-     * @param nAfter End date of the certificate
+     * @param certTemplate template of the certificate extensions (Bouncycastle)
      * @return return a result object with a copy of the input if VALID, null when INVALID and
      * a new value if overruled
      */
-    public Result validateCertificateValidity(DateTime nBefore, DateTime nAfter) throws ProfileException;
+    public Result validateCertificateValidity(CertTemplate certTemplate) throws ProfileException;
 
     /**
      * Verify the keylength against the profile. Also here the keylength can be overruled
      * The Result object has the overruled or copied object. If invalid a String is return with
      * an error message
      *
-     * @param keyLength requested keyLength
+     * @param certTemplate template of the certificate extensions (Bouncycastle)
      * @return return a result object with a copy of the input if VALID, null when INVALID and
      * a new value if overruled
      */
-    public Result validateCertificateKeyLength(Integer keyLength) throws ProfileException;
+    public Result validateCertificateKeyLength(CertTemplate certTemplate) throws ProfileException, IOException;
 
     /**
      * Signing algorithm of the certificate
@@ -114,10 +116,10 @@ public interface Profile {
      * the new or copied Extension will be stored in the result.
      * In case of invalid the result extension is null
      *
-     * @param extensions list of extensions (Bouncycastle)
+     * @param certTemplate template of the certificate extensions (Bouncycastle)
      * @return returns a result list with the old and update extensions included when OVERRULED and VALID.
      * Stops at the extension when INVALID extension is found
      */
-    public List<Result> validateCertificateExtensions(Extensions extensions) throws IOException;
+    public List<Result> validateCertificateExtensions(CertTemplate certTemplate) throws IOException, NoSuchAlgorithmException;
 
 }

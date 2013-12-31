@@ -60,10 +60,12 @@ public class PKIServer  {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public PKIServer init() throws UnrecoverableKeyException, NoSuchProviderException, NoSuchAlgorithmException, KeyStoreException, CertificateException, FileNotFoundException, IOException {
-    	
-    	KeyStore keyStore = KeyStore.getInstance("JKS");
-    	keyStore.load(new FileInputStream("keystore.jks"), "system".toCharArray());
+    public PKIServer init() throws UnrecoverableKeyException, NoSuchProviderException, NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
+
+        FileInputStream fileInputStream = new FileInputStream("keystore.jks");
+
+        KeyStore keyStore = KeyStore.getInstance("JKS");
+        keyStore.load(fileInputStream, "system".toCharArray());
 
         PrivateKey  communicationPrivateKey = (PrivateKey)keyStore.getKey("COMM", "ca-system".toCharArray());
         Certificate communicationPublicKey = keyStore.getCertificate("COMM");
@@ -77,6 +79,8 @@ public class PKIServer  {
                 keyStore.getCertificateChain("CA"),
                 "BC",
                 "SHA1PRNG");
+
+        fileInputStream.close();
 
         return this;
     }
@@ -117,7 +121,7 @@ public class PKIServer  {
      * @throws NoSuchProviderException 
      * @throws UnrecoverableKeyException 
      */
-    public static void main(String[] args) throws UnrecoverableKeyException, NoSuchProviderException, NoSuchAlgorithmException, KeyStoreException, CertificateException, FileNotFoundException, IOException {
+    public static void main(String[] args) throws UnrecoverableKeyException, NoSuchProviderException, NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
 
         int port;
         if (args.length > 0) {

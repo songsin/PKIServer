@@ -20,16 +20,16 @@ import javax.xml.bind.annotation.XmlElement;
 public class JAXBCertificateValidity {
 
     @XmlElement(name="Minimum_Duration")
-    protected Integer minimumDuration;
+    private Integer minimumDuration;
 
     @XmlElement(name="Maximum_Duration")
-    protected Integer maximumDuration;
+    private Integer maximumDuration;
 
     @XmlElement(name="Not_Before")
-    protected JAXBDateWithOverRule notBefore;
+    private JAXBDateWithOverRule notBefore;
 
     @XmlElement(name="Not_After")
-    protected JAXBDateWithOverRule notAfter;
+    private JAXBDateWithOverRule notAfter;
 
     public Integer getMinimumDuration() {
         return minimumDuration;

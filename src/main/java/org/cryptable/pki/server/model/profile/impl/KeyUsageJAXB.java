@@ -32,20 +32,20 @@ import java.util.BitSet;
  */
 public class KeyUsageJAXB implements ExtensionTemplate {
 
-    final Logger logger = LoggerFactory.getLogger(KeyUsageJAXB.class);
+    private final Logger logger = LoggerFactory.getLogger(KeyUsageJAXB.class);
 
-    final static int SIGNATURE                  = 0;
-    final static int NON_REPUDIATION            = 1;
-    final static int KEY_ENCIPHERMENT           = 2;
-    final static int DATA_ENCIPHERMENT          = 3;
-    final static int KEY_AGREEMENT              = 4;
-    final static int CRL_SIGNATURE              = 5;
-    final static int ENCIPHERMENT_ONLY          = 6;
-    final static int DECIPHERMENT_ONLY          = 7;
-    final static int KEY_CERTIFICATE_SIGNATURE  = 8;
+    private final static int SIGNATURE                  = 0;
+    private final static int NON_REPUDIATION            = 1;
+    private final static int KEY_ENCIPHERMENT           = 2;
+    private final static int DATA_ENCIPHERMENT          = 3;
+    private final static int KEY_AGREEMENT              = 4;
+    private final static int CRL_SIGNATURE              = 5;
+    private final static int ENCIPHERMENT_ONLY          = 6;
+    private final static int DECIPHERMENT_ONLY          = 7;
+    private final static int KEY_CERTIFICATE_SIGNATURE  = 8;
 
-    private BitSet overRuleKeyUsage = new BitSet(9);
-    private BitSet enabeKeyUsage = new BitSet(9);
+    private final BitSet overRuleKeyUsage = new BitSet(9);
+    private final BitSet enabeKeyUsage = new BitSet(9);
 
     private void setBits(int position, String xmlEntry) {
         if (xmlEntry == null)
@@ -89,7 +89,7 @@ public class KeyUsageJAXB implements ExtensionTemplate {
 
     @Override
     public ASN1ObjectIdentifier getExtensionOID() {
-        return new ASN1ObjectIdentifier("2.5.29.15");
+        return Extension.keyUsage;
     }
 
     @Override
