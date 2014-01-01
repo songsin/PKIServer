@@ -2,6 +2,7 @@ package org.cryptable.pki.server.model.profile.impl;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.crmf.CertTemplate;
+import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
@@ -39,10 +40,15 @@ public class ProfileJAXB implements Profile {
 
     final private HashMap<ASN1ObjectIdentifier, ExtensionTemplate> extensionTemplates = new HashMap<ASN1ObjectIdentifier, ExtensionTemplate>();
 
-    public ProfileJAXB(JAXBProfile jaxbProfile) {
+    public ProfileJAXB(JAXBProfile jaxbProfile, Certificate caCertificate) throws IOException, NoSuchAlgorithmException {
+
         this.jaxbProfile = jaxbProfile;
-        extensionTemplates.put(Extension.keyUsage, new KeyUsageJAXB(jaxbProfile.getCertificateProfile().getExtensions().getKeyUsage()));
-        extensionTemplates.put(Extension.subjectKeyIdentifier, new SubjectKeyIdentifierJAXB(jaxbProfile.getCertificateProfile().getExtensions().getSubjectKeyIdentifier()));
+        if (jaxbProfile.getCertificateProfile().getExtensions().getAuthorityKeyIdentifier() != null)
+            extensionTemplates.put(Extension.authorityKeyIdentifier, new AuthorityKeyIdentifierJAXB(jaxbProfile.getCertificateProfile().getExtensions().getAuthorityKeyIdentifier(), caCertificate));
+        if (jaxbProfile.getCertificateProfile().getExtensions().getSubjectKeyIdentifier() != null)
+            extensionTemplates.put(Extension.subjectKeyIdentifier, new SubjectKeyIdentifierJAXB(jaxbProfile.getCertificateProfile().getExtensions().getSubjectKeyIdentifier()));
+        if (jaxbProfile.getCertificateProfile().getExtensions().getKeyUsage() != null)
+            extensionTemplates.put(Extension.keyUsage, new KeyUsageJAXB(jaxbProfile.getCertificateProfile().getExtensions().getKeyUsage()));
     }
 
     @Override
@@ -292,24 +298,33 @@ public class ProfileJAXB implements Profile {
     }
 
     @Override
-    public List<Result> validateCertificateExtensions(CertTemplate certTemplate) throws IOException, NoSuchAlgorithmException {
+    public List<Result> validateCertificateExtensions(CertTemplate certTemplate) throws IOException, NoSuchAlgorithmException, ProfileException {
         List<Result> results = new ArrayList<Result>();
 
         Extensions extensions = certTemplate.getExtensions();
 
-        // Validate the extensions
-        for (ASN1ObjectIdentifier oid : extensions.getExtensionOIDs()) {
-            ExtensionTemplate extensionTemplate = extensionTemplates.get(oid);
-            if (extensionTemplate != null)
-                results.add(extensionTemplate.validateExtension(extensions.getExtension(oid)));
+        if (extensions != null) {
+            // Validate the extensions
+            for (ASN1ObjectIdentifier oid : extensions.getExtensionOIDs()) {
+                ExtensionTemplate extensionTemplate = extensionTemplates.get(oid);
+                if (extensionTemplate != null) {
+                    extensionTemplate.initialize(certTemplate);
+                    results.add(extensionTemplate.validateExtension(extensions.getExtension(oid)));
+                }
+                else {
+                    results.add(new Result(Result.Decisions.VALID, extensions.getExtension(oid)));
+                }
+            }
         }
 
         // Add the missing extensions
         for (Map.Entry<ASN1ObjectIdentifier, ExtensionTemplate> entry: extensionTemplates.entrySet()) {
-            Extension extension = extensions.getExtension(entry.getKey());
+            Extension extension = extensions == null ? null : extensions.getExtension(entry.getKey());
 
-            if (extension == null)
+            if (extension == null) {
+                entry.getValue().initialize(certTemplate);
                 results.add(entry.getValue().getExtension());
+            }
         }
 
         return results;

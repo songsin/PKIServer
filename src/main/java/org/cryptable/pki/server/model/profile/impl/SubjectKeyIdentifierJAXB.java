@@ -2,16 +2,19 @@ package org.cryptable.pki.server.model.profile.impl;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.crmf.CertTemplate;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.cert.X509ExtensionUtils;
 import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.cryptable.pki.server.model.profile.ExtensionTemplate;
+import org.cryptable.pki.server.model.profile.ProfileException;
 import org.cryptable.pki.server.model.profile.Result;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 
 /**
  * Glue class between JAXB and the Bouncycastle extensions
@@ -23,8 +26,7 @@ import java.security.NoSuchAlgorithmException;
 public class SubjectKeyIdentifierJAXB implements ExtensionTemplate {
 
     private boolean truncatedSHA1 = false;
-
-    private SubjectPublicKeyInfo publicKeyData;
+    private SubjectPublicKeyInfo publicKeyInfo;
 
     public SubjectKeyIdentifierJAXB(String subjectKeyId) {
 
@@ -32,7 +34,6 @@ public class SubjectKeyIdentifierJAXB implements ExtensionTemplate {
             truncatedSHA1 = false;
         else
             truncatedSHA1 = true;
-        publicKeyData = null;
     }
 
     @Override
@@ -57,9 +58,9 @@ public class SubjectKeyIdentifierJAXB implements ExtensionTemplate {
 
         // Overrule the extension
         if (truncatedSHA1)
-            subjectKeyIdentifier = x509ExtensionUtils.createTruncatedSubjectKeyIdentifier(publicKeyData);
+            subjectKeyIdentifier = x509ExtensionUtils.createTruncatedSubjectKeyIdentifier(publicKeyInfo);
         else
-            subjectKeyIdentifier = x509ExtensionUtils.createSubjectKeyIdentifier(publicKeyData);
+            subjectKeyIdentifier = x509ExtensionUtils.createSubjectKeyIdentifier(publicKeyInfo);
 
         Extension tempExtension = new Extension(Extension.subjectKeyIdentifier,
             false,
@@ -68,8 +69,14 @@ public class SubjectKeyIdentifierJAXB implements ExtensionTemplate {
         return new Result(Result.Decisions.OVERRULED, tempExtension);
     }
 
-    public void setSubjectPublicKeyInfo(SubjectPublicKeyInfo subjectPublicKeyInfo) {
-        publicKeyData = subjectPublicKeyInfo;
+    @Override
+    public void initialize(CertTemplate certTemplate) throws ProfileException {
+        if (certTemplate != null && certTemplate.getPublicKey() != null) {
+            this.publicKeyInfo = certTemplate.getPublicKey();
+        }
+        else {
+            throw new ProfileException("No public key to generate Subject Key Identifier");
+        }
     }
 
     @Override
@@ -78,21 +85,16 @@ public class SubjectKeyIdentifierJAXB implements ExtensionTemplate {
         X509ExtensionUtils x509ExtensionUtils = new JcaX509ExtensionUtils();
         SubjectKeyIdentifier subjectKeyIdentifier = null;
 
-        if (publicKeyData != null) {
-            if (truncatedSHA1)
-                subjectKeyIdentifier = x509ExtensionUtils.createTruncatedSubjectKeyIdentifier(publicKeyData);
-            else
-                subjectKeyIdentifier = x509ExtensionUtils.createSubjectKeyIdentifier(publicKeyData);
+        if (truncatedSHA1)
+            subjectKeyIdentifier = x509ExtensionUtils.createTruncatedSubjectKeyIdentifier(publicKeyInfo);
+        else
+            subjectKeyIdentifier = x509ExtensionUtils.createSubjectKeyIdentifier(publicKeyInfo);
 
-            Extension extension = new Extension(Extension.subjectKeyIdentifier,
-                false,
-                new DEROctetString(subjectKeyIdentifier));
-            result.setDecision(Result.Decisions.VALID);
-            result.setValue(extension);
-        }
-        else {
-            result.setValue(String.valueOf("No public key to generate Subject Key Identifier"));
-        }
+        Extension extension = new Extension(Extension.subjectKeyIdentifier,
+            false,
+            new DEROctetString(subjectKeyIdentifier));
+        result.setDecision(Result.Decisions.VALID);
+        result.setValue(extension);
 
         return result;
     }

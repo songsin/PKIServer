@@ -2,6 +2,7 @@ package org.cryptable.pki.server.model.profile.impl;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.crmf.CertTemplate;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.cryptable.pki.server.model.profile.ExtensionTemplate;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.security.cert.X509Certificate;
 import java.util.BitSet;
 
 /**
@@ -116,6 +118,11 @@ public class KeyUsageJAXB implements ExtensionTemplate {
 
         logger.debug(newKeyUsage.toString());
         return result;
+    }
+
+    @Override
+    public void initialize(CertTemplate certTemplate) {
+
     }
 
     @Override

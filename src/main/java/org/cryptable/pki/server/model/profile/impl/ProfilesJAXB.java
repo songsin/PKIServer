@@ -1,5 +1,6 @@
 package org.cryptable.pki.server.model.profile.impl;
 
+import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.x509.Extension;
 import org.cryptable.pki.server.model.profile.Profile;
 import org.cryptable.pki.server.model.profile.ProfileException;
@@ -15,6 +16,7 @@ import javax.xml.bind.Unmarshaller;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,7 +32,7 @@ public class ProfilesJAXB implements Profiles {
     private final HashMap<Integer, Profile> profilesIDs = new HashMap<Integer, Profile>();
     private final HashMap<String, Profile> profilesNames = new HashMap<String, Profile>();
 
-    private void init(InputStream inputStream) throws JAXBException, ProfileException {
+    private void init(InputStream inputStream, Certificate caCertificate) throws JAXBException, ProfileException, IOException, NoSuchAlgorithmException {
         JAXBContext jaxbContext = JAXBContext.newInstance(JAXBProfiles.class);
 
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -41,7 +43,7 @@ public class ProfilesJAXB implements Profiles {
 
                 for (JAXBProfile jaxbProfile : profileList) {
                     if (jaxbProfile != null) {
-                        ProfileJAXB profileJAXB = new ProfileJAXB(jaxbProfile);
+                        ProfileJAXB profileJAXB = new ProfileJAXB(jaxbProfile, caCertificate);
                         profilesIDs.put(jaxbProfile.getId(), profileJAXB);
                         profilesNames.put(jaxbProfile.getName(), profileJAXB);
                         logger.debug("ID: [" + String.valueOf(jaxbProfile.getId()) + "] and Name: [" +
@@ -62,16 +64,16 @@ public class ProfilesJAXB implements Profiles {
     public ProfilesJAXB() {
     }
 
-    public ProfilesJAXB(InputStream inputStream) throws JAXBException, ProfileException, IOException {
-        init(inputStream);
+    public ProfilesJAXB(InputStream inputStream, Certificate caCertificate) throws JAXBException, ProfileException, IOException, NoSuchAlgorithmException {
+        init(inputStream, caCertificate);
     }
 
-    public ProfilesJAXB(String fileName) throws JAXBException, IOException, ProfileException {
+    public ProfilesJAXB(String fileName, Certificate caCertificate) throws JAXBException, IOException, ProfileException, NoSuchAlgorithmException {
 
         logger.debug(fileName);
 
         FileInputStream fis = new FileInputStream(fileName);
-        init(fis);
+        init(fis, caCertificate);
         fis.close();
     }
 

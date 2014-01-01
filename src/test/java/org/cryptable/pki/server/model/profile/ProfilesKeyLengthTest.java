@@ -4,8 +4,13 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.crmf.CertTemplate;
 import org.bouncycastle.asn1.crmf.CertTemplateBuilder;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.cert.CertIOException;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.cryptable.pki.server.model.profile.impl.ProfilesJAXB;
+import org.cryptable.pki.util.GeneratePKI;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -15,6 +20,9 @@ import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.*;
+import java.security.cert.CRLException;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPrivateCrtKeySpec;
 import java.security.spec.RSAPublicKeySpec;
@@ -91,15 +99,20 @@ public class ProfilesKeyLengthTest {
         new BigInteger("cd05b923838b5bb6c9b72005fe0f52fa2284beda7587dfe3b5040c68fba276839fca6176382a179d7300d0c99dd2f65ffc7bb5e0d5b152269518f1ec955ac3299b08bbac7950632d9948b86903cdd8f0cb5619c72c3db32b7425590056a371f4b9a58782087d5360bd343b72483ea4489d115530d194df9bc2159eb10dae6d0853b985bbba42ce1761b7ef1ed25499ad6f32866678c977a4c9562d618fe5312ef3dcffc6d7124674d06ddfb953cbb4942418aa7aeeee96a368bf15fe2c85749073005818b7a9b382d230f2a129aac166a8540c7712e8d0176ab8ee4875a9c9623e3baf5778520916117b05feed4550e9e3e6ec8a98b9760a55e896eb1f65b9094be84706426d1a723a60f04e52754300dcbb53eda31efd5bc36e9acf69d746cb03ff079216c579cb47c1d9f82d7654f665016cdd13a70cf8bc3b97f6af2671c7f7e0bc9f63769f203206952a77ef3293c577b3a86fcb8a3c4a5968a0ba70736042421cfe1a749db759e83ed36cf8bef489b57bc061e5e1f3df03e60f83b61594ee073ee7324d2ab3f7b6a509570696a18977437e1a4a1623d7ceb0bf2b40bdf552e5e7b410e2b792eb8ed355316baac2f461934302e339ec14392fc5caf092215d067deb1438669089e6e4b9022cf8bba12f7993e788160762cd344d91292042afeb6a5ef38ae3605709039ee627668a559e2a0f86536f3bdc7c7f5b83a70cd3", 16),
         new BigInteger("cf12d6e43c2fd810e5d4e55e743fc5c1325f6cd0168a94e5f48424ee428a4192bec33d9c7e0a4307cc0dd8f9f890442e09f84c45df9b551743140383d20f0d1bd744f8637b43c6d453164a444bb17fb9f4070f8905746b4f1d80f8f55e11e2d23d37d5fd0a1b47fa3a0e914d4345f7dfa342f0e059565eae3d87e8015251bf95b5ca6f066f61b19258fcb63214e0e29a0a1ebdb4de8724702f3681dd35af19b44d901935970c8bbbfdb83a2e5ef3f38fed50b14b50ba40f1b33a24592cef6d17e6293e36d17f86fc9818c88d66bca9926cc1a29d16eebe18c0a9c43ab179b094591f95633414f400e8c28d950ebd033b7aa3ff7524a05938cb371764f9ae1fecc61cc87e4ad8c41245a5e8c7534cd21d8dfb830adab3fe2cb1197206e0a9a1f5a03d63aefb818e273c8ad001a87dc4bdc827405e5c7fa228d306ac0baeed2c433bd7e2ebd683627294b482fa2bd8751265eaea6d8116bf9a4583229c27e05633a69414240b2e502996b42f50d7f22b7eb27b988fee5e7e2711a9e44e5193cf5fff0a36bd7e299f170f334af7f5fb19c2db4f0ef159dc8ec3c6a74668dcb21cd8986c5e8db3801cda4cee338b914a08818919ab2a57ddd0355486e11b630099042c5aef88afe5941fc610a47c92508cf4fe3be8047c0ca7e853c619794605ab4e3f40bb9a94eec4d1f29cb2676a739e3b5794580b26edf2bf714b8f926775d96f", 16));
 
+    static private GeneratePKI generatePKI;
+
     @BeforeClass
-    static public void init() {
+    static public void init() throws CertificateException, CertIOException, NoSuchAlgorithmException, OperatorCreationException, CRLException, NoSuchProviderException, InvalidKeySpecException {
         Security.addProvider(new BouncyCastleProvider());
+        generatePKI = new GeneratePKI();
+        generatePKI.createPKI();
     }
 
     @Before
-    public void setup() throws JAXBException, IOException, ProfileException, NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
+    public void setup() throws JAXBException, IOException, ProfileException, NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException, CertificateEncodingException {
+        X509CertificateHolder x509CertificateHolder = new JcaX509CertificateHolder(generatePKI.getCaCert());
         if (profiles == null)
-            profiles = new ProfilesJAXB(getClass().getResourceAsStream("/KeyLength.xml"));
+            profiles = new ProfilesJAXB(getClass().getResourceAsStream("/KeyLength.xml"), x509CertificateHolder.toASN1Structure());
 
         KeyFactory          fact = KeyFactory.getInstance("RSA", "BC");
 

@@ -10,21 +10,6 @@
       <Keys>Don't Store Private Keys</Keys>
       <Publication>00:00</Publication>
       <Extensions>
-        <Authority_Key_Identifier>Subject Key Identifier</Authority_Key_Identifier>
-        <Subject_Key_Identifier>160 bit SHA-1</Subject_Key_Identifier>
-        <Key_Usage>
-          <CRL_Signature>Enable</CRL_Signature>
-          <Key_Certificate_Signature>Enable</Key_Certificate_Signature>
-        </Key_Usage>
-        <Extended_Key_Usage>
-          <Key_Recovery_Agent>No Overrule</Key_Recovery_Agent>
-          <Drive_Encryption>No Overrule</Drive_Encryption>
-          <Drive_Recovery>No Overrule</Drive_Recovery>
-        </Extended_Key_Usage>
-        <Basic_Constraints>
-          <Use_CA_Key>Yes</Use_CA_Key>
-          <Certificate_Path_lentgh>4</Certificate_Path_lentgh>
-        </Basic_Constraints>
       </Extensions>
     </Certificate>
     <PIN_Code>
@@ -72,35 +57,6 @@
       <Keys>Store Private Keys</Keys>
       <Publication>00:00</Publication>
       <Extensions>
-        <Authority_Key_Identifier>Subject Key Identifier</Authority_Key_Identifier>
-        <Subject_Key_Identifier>160 bit SHA-1</Subject_Key_Identifier>
-        <Key_Usage>
-          <Signature>Enable</Signature>
-          <Non_Repudiation>No Overrule</Non_Repudiation>
-          <Key_Encipherment>No Overrule</Key_Encipherment>
-          <Data_Encipherment>No Overrule</Data_Encipherment>
-          <Key_Agreement>No Overrule</Key_Agreement>
-          <CRL_Signature>No Overrule</CRL_Signature>
-          <Encipherment_Only>No Overrule</Encipherment_Only>
-          <Decipherment_Only>No Overrule</Decipherment_Only>
-          <Key_Certificate_Signature>No Overrule</Key_Certificate_Signature>
-        </Key_Usage>
-        <Extended_Key_Usage>
-          <Server_Authentication>No Overrule</Server_Authentication>
-          <Client_Authentication>Enable</Client_Authentication>
-          <Code_Signing>No Overrule</Code_Signing>
-          <E_Mail_Protection>No Overrule</E_Mail_Protection>
-          <Time_Stamping>No Overrule</Time_Stamping>
-          <IPSec_End_System>No Overrule</IPSec_End_System>
-          <IPSec_Tunnel>No Overrule</IPSec_Tunnel>
-          <IPSec_User>No Overrule</IPSec_User>
-          <IKE_Intermediate>No Overrule</IKE_Intermediate>
-          <OCSP_Signing>No Overrule</OCSP_Signing>
-          <Smartcard_Logon>No Overrule</Smartcard_Logon>
-          <Key_Recovery_Agent>No Overrule</Key_Recovery_Agent>
-          <Drive_Encryption>No Overrule</Drive_Encryption>
-          <Drive_Recovery>No Overrule</Drive_Recovery>
-        </Extended_Key_Usage>
       </Extensions>
     </Certificate>
     <PIN_Code>
@@ -154,35 +110,6 @@
       <Keys>Store Private Keys</Keys>
       <Publication>00:00</Publication>
       <Extensions>
-        <Authority_Key_Identifier>Subject Key Identifier</Authority_Key_Identifier>
-        <Subject_Key_Identifier>160 bit SHA-1</Subject_Key_Identifier>
-        <Key_Usage>
-          <Signature>Enable</Signature>
-          <Non_Repudiation>No Overrule</Non_Repudiation>
-          <Key_Encipherment>No Overrule</Key_Encipherment>
-          <Data_Encipherment>No Overrule</Data_Encipherment>
-          <Key_Agreement>No Overrule</Key_Agreement>
-          <CRL_Signature>No Overrule</CRL_Signature>
-          <Encipherment_Only>No Overrule</Encipherment_Only>
-          <Decipherment_Only>No Overrule</Decipherment_Only>
-          <Key_Certificate_Signature>No Overrule</Key_Certificate_Signature>
-        </Key_Usage>
-        <Extended_Key_Usage>
-          <Server_Authentication>No Overrule</Server_Authentication>
-          <Client_Authentication>Enable</Client_Authentication>
-          <Code_Signing>No Overrule</Code_Signing>
-          <E_Mail_Protection>No Overrule</E_Mail_Protection>
-          <Time_Stamping>No Overrule</Time_Stamping>
-          <IPSec_End_System>No Overrule</IPSec_End_System>
-          <IPSec_Tunnel>No Overrule</IPSec_Tunnel>
-          <IPSec_User>No Overrule</IPSec_User>
-          <IKE_Intermediate>No Overrule</IKE_Intermediate>
-          <OCSP_Signing>No Overrule</OCSP_Signing>
-          <Smartcard_Logon>No Overrule</Smartcard_Logon>
-          <Key_Recovery_Agent>No Overrule</Key_Recovery_Agent>
-          <Drive_Encryption>No Overrule</Drive_Encryption>
-          <Drive_Recovery>No Overrule</Drive_Recovery>
-        </Extended_Key_Usage>
       </Extensions>
     </Certificate>
     <PIN_Code>

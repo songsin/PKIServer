@@ -6,14 +6,27 @@ import org.bouncycastle.asn1.crmf.CertTemplateBuilder;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.cert.CertIOException;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.cryptable.pki.server.model.profile.impl.ProfilesJAXB;
+import org.cryptable.pki.util.GeneratePKI;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.Security;
+import java.security.cert.CRLException;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPrivateCrtKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.List;
@@ -31,10 +44,20 @@ public class ProfilesKeyUsageTest {
     static private Profiles profiles;
     private CertTemplateBuilder certTemplateBuilder = new CertTemplateBuilder();
 
+    static private GeneratePKI generatePKI;
+
+    @BeforeClass
+    static public void init() throws CertificateException, CertIOException, NoSuchAlgorithmException, OperatorCreationException, CRLException, NoSuchProviderException, InvalidKeySpecException {
+        Security.addProvider(new BouncyCastleProvider());
+        generatePKI = new GeneratePKI();
+        generatePKI.createPKI();
+    }
+
     @Before
-    public void setup() throws JAXBException, IOException, ProfileException {
+    public void setup() throws JAXBException, IOException, ProfileException, NoSuchAlgorithmException, CertificateEncodingException {
+        X509CertificateHolder x509CertificateHolder = new JcaX509CertificateHolder(generatePKI.getCaCert());
         if (profiles == null)
-            profiles = new ProfilesJAXB(getClass().getResourceAsStream("/KeyUsage.xml"));
+            profiles = new ProfilesJAXB(getClass().getResourceAsStream("/KeyUsage.xml"), x509CertificateHolder.toASN1Structure());
     }
 
     /**

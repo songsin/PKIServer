@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.util.List;
 
 /**
@@ -17,7 +18,8 @@ import java.util.List;
  * Hour: 09:53
  */
 public interface Profile {
-    /**
+
+     /**
      * Verify the validity of the NBefore. Returns a result object, because it can be overruled.
      * The Result object has the overruled or copied object. If invalid a String is return with
      * an error message
@@ -120,6 +122,6 @@ public interface Profile {
      * @return returns a result list with the old and update extensions included when OVERRULED and VALID.
      * Stops at the extension when INVALID extension is found
      */
-    public List<Result> validateCertificateExtensions(CertTemplate certTemplate) throws IOException, NoSuchAlgorithmException;
+    public List<Result> validateCertificateExtensions(CertTemplate certTemplate) throws IOException, NoSuchAlgorithmException, ProfileException;
 
 }

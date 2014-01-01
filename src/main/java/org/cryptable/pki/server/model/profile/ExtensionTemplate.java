@@ -1,11 +1,13 @@
 package org.cryptable.pki.server.model.profile;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.crmf.CertTemplate;
 import org.bouncycastle.asn1.x509.Extension;
 import org.cryptable.pki.server.model.profile.Result;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 
 /**
  * Author: davidtillemans
@@ -30,7 +32,14 @@ public interface ExtensionTemplate {
     Result validateExtension(Extension extension) throws IOException, NoSuchAlgorithmException;
 
     /**
-     * Returns the extension
+     * Set the certificate template to be used within the extension
+     *
+     * @param certTemplate
+     */
+    void initialize(CertTemplate certTemplate) throws ProfileException;
+
+    /**
+     * Returns the extension with the optional
      *
      * @return
      */
