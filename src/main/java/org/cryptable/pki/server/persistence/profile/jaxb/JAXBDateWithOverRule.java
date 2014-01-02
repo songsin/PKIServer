@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JAXBDateWithOverRule {
     @XmlAttribute(name="Overrule")
-    @XmlJavaTypeAdapter(BooleanAdapter.class)
+    @XmlJavaTypeAdapter(BooleanYesNoAdapter.class)
     private Boolean overrule;
 
     @XmlValue

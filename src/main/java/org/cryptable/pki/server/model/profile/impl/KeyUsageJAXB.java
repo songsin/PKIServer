@@ -141,6 +141,7 @@ public class KeyUsageJAXB implements ExtensionTemplate {
 
         KeyUsage keyUsage = new KeyUsage(tempKeyUsage);
 
+        // create new extension
         Extension extension = new Extension(Extension.keyUsage, true,  new DEROctetString(keyUsage));
 
         return new Result(Result.Decisions.VALID, extension);

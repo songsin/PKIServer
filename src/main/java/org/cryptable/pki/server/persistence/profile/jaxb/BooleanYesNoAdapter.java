@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * Date: 27/12/13
  * Hour: 23:22
  */
-class BooleanAdapter extends XmlAdapter<String, Boolean> {
+class BooleanYesNoAdapter extends XmlAdapter<String, Boolean> {
 
     @Override
     public Boolean unmarshal(String value) {

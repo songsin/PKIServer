@@ -49,6 +49,8 @@ public class ProfileJAXB implements Profile {
             extensionTemplates.put(Extension.subjectKeyIdentifier, new SubjectKeyIdentifierJAXB(jaxbProfile.getCertificateProfile().getExtensions().getSubjectKeyIdentifier()));
         if (jaxbProfile.getCertificateProfile().getExtensions().getKeyUsage() != null)
             extensionTemplates.put(Extension.keyUsage, new KeyUsageJAXB(jaxbProfile.getCertificateProfile().getExtensions().getKeyUsage()));
+        if (jaxbProfile.getCertificateProfile().getExtensions().getCertificatePolicies() != null)
+            extensionTemplates.put(Extension.certificatePolicies, new CertificatePoliciesJAXB(jaxbProfile.getCertificateProfile().getExtensions().getCertificatePolicies()));
     }
 
     @Override
