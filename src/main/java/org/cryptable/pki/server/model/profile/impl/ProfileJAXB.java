@@ -21,6 +21,7 @@ import org.joda.time.Period;
 import org.joda.time.format.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.jvm.hotspot.debugger.cdbg.basic.ResolveListener;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -51,6 +52,12 @@ public class ProfileJAXB implements Profile {
             extensionTemplates.put(Extension.keyUsage, new KeyUsageJAXB(jaxbProfile.getCertificateProfile().getExtensions().getKeyUsage()));
         if (jaxbProfile.getCertificateProfile().getExtensions().getCertificatePolicies() != null)
             extensionTemplates.put(Extension.certificatePolicies, new CertificatePoliciesJAXB(jaxbProfile.getCertificateProfile().getExtensions().getCertificatePolicies()));
+        if (jaxbProfile.getCertificateProfile().getExtensions().getSubjectAlternativeName() != null)
+            extensionTemplates.put(Extension.subjectAlternativeName, new SubjectAlternativeNameJAXB(jaxbProfile.getCertificateProfile().getExtensions().getSubjectAlternativeName()));
+        if (jaxbProfile.getCertificateProfile().getExtensions().getIssuerAlternativeName() != null)
+            extensionTemplates.put(Extension.issuerAlternativeName, new IssuerAlternativeNameJAXB(jaxbProfile.getCertificateProfile().getExtensions().getIssuerAlternativeName()));
+        if (jaxbProfile.getCertificateProfile().getExtensions().getExtendedKeyUsage() != null)
+            extensionTemplates.put(Extension.extendedKeyUsage, new ExtendedKeyUsageJAXB(jaxbProfile.getCertificateProfile().getExtensions().getExtendedKeyUsage()));
     }
 
     @Override
@@ -312,9 +319,12 @@ public class ProfileJAXB implements Profile {
                 if (extensionTemplate != null) {
                     extensionTemplate.initialize(certTemplate);
                     results.add(extensionTemplate.validateExtension(extensions.getExtension(oid)));
+                    logger.debug("Validated extension");
                 }
                 else {
+                    // Add unknown extensions
                     results.add(new Result(Result.Decisions.VALID, extensions.getExtension(oid)));
+                    logger.debug("Copied original extension validation missing");
                 }
             }
         }
@@ -325,7 +335,11 @@ public class ProfileJAXB implements Profile {
 
             if (extension == null) {
                 entry.getValue().initialize(certTemplate);
-                results.add(entry.getValue().getExtension());
+                Result temp = entry.getValue().getExtension();
+                if (temp != null) {
+                    results.add(temp);
+                    logger.debug("Adding extension");
+                }
             }
         }
 

@@ -25,21 +25,20 @@ import java.security.NoSuchAlgorithmException;
 public class SubjectAlternativeNameJAXB implements ExtensionTemplate {
 
     private boolean[] keep = new boolean[9];
-    private String otherName = null;
 
     public SubjectAlternativeNameJAXB(JAXBSubjectAlternativeName jaxbSubjectAlternativeName) {
         for (int i=0; i<keep.length; i++) keep[i] = false;
-        if (jaxbSubjectAlternativeName.getKeepDName())
+        if (jaxbSubjectAlternativeName.getOtherName() == null || jaxbSubjectAlternativeName.getKeepDName())
             keep[GeneralName.directoryName] = true;
-        if (jaxbSubjectAlternativeName.getKeepDomainName())
+        if (jaxbSubjectAlternativeName.getOtherName() == null || jaxbSubjectAlternativeName.getKeepDomainName())
             keep[GeneralName.dNSName] = true;
-        if (jaxbSubjectAlternativeName.getKeepEmail())
+        if (jaxbSubjectAlternativeName.getOtherName() == null || jaxbSubjectAlternativeName.getKeepEmail())
             keep[GeneralName.rfc822Name] = true;
-        if (jaxbSubjectAlternativeName.getKeepIPAdress())
+        if (jaxbSubjectAlternativeName.getOtherName() == null || jaxbSubjectAlternativeName.getKeepIPAdress())
             keep[GeneralName.iPAddress] = true;
-        if (jaxbSubjectAlternativeName.getKeepURL())
+        if (jaxbSubjectAlternativeName.getOtherName() == null || jaxbSubjectAlternativeName.getKeepURL())
             keep[GeneralName.uniformResourceIdentifier] = true;
-        if (!jaxbSubjectAlternativeName.getOtherName().isEmpty()) {
+        if (jaxbSubjectAlternativeName.getOtherName() == null || !jaxbSubjectAlternativeName.getOtherName().isEmpty()) {
             keep[GeneralName.otherName] = true;
         }
     }
@@ -51,7 +50,7 @@ public class SubjectAlternativeNameJAXB implements ExtensionTemplate {
 
     @Override
     public Result validateExtension(Extension extension) throws IOException, NoSuchAlgorithmException {
-        Result result = new Result(Result.Decisions.INVALID, null);
+        Result result = new Result(Result.Decisions.VALID, null);
 
         GeneralNamesBuilder generalNamesBuilder = new GeneralNamesBuilder();
         GeneralNames generalNames = GeneralNames.getInstance(extension.getParsedValue());

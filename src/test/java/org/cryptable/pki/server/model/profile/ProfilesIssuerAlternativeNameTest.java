@@ -1,6 +1,6 @@
 package org.cryptable.pki.server.model.profile;
 
-import junit.framework.Assert;
+import com.sun.jndi.url.dns.dnsURLContext;
 import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.crmf.CertTemplate;
 import org.bouncycastle.asn1.crmf.CertTemplateBuilder;
@@ -44,7 +44,7 @@ import static org.junit.Assert.assertEquals;
  * Date: 28/12/13
  * Hour: 00:27
  */
-public class ProfilesSubjectAlternativeNameTest {
+public class ProfilesIssuerAlternativeNameTest {
 
     static private Profiles profiles;
     static private GeneratePKI generatePKI;
@@ -61,25 +61,7 @@ public class ProfilesSubjectAlternativeNameTest {
     public void setup() throws JAXBException, IOException, ProfileException, CertificateEncodingException, NoSuchAlgorithmException {
         X509CertificateHolder x509CertificateHolder = new JcaX509CertificateHolder(generatePKI.getCaCert());
         if (profiles == null)
-            profiles = new ProfilesJAXB(getClass().getResourceAsStream("/SubjectAlternativeName.xml"), x509CertificateHolder.toASN1Structure());
-    }
-
-    private void referenceCertificates() throws IOException {
-        // Reference check to a real certificate (non) Bouncycastle
-        File file = new File(getClass().getResource("/SubjectAlternativeName_GUID.der").getFile());
-        FileInputStream fis = new FileInputStream(file);
-        byte[] data = new byte[(int)file.length()];
-        fis.read(data);
-        fis.close();
-        Certificate certificate = Certificate.getInstance(data);
-        Extension ext2 = certificate.getTBSCertificate().getExtensions().getExtension(Extension.subjectAlternativeName);
-        System.out.println("Certificate:");
-        System.out.print(ASN1Dump.dumpAsString(ext2.getExtnValue(), true));
-        ASN1OctetString oct = ext2.getExtnValue();
-        ASN1InputStream extIn = new ASN1InputStream(new ByteArrayInputStream(oct.getOctets()));
-        GeneralNames decodedGenName = GeneralNames.getInstance(extIn.readObject());
-        System.out.println("Subject Alternative name:");
-        System.out.print(ASN1Dump.dumpAsString(decodedGenName, true));
+            profiles = new ProfilesJAXB(getClass().getResourceAsStream("/IssuerAlternativeName.xml"), x509CertificateHolder.toASN1Structure());
     }
 
     /**
@@ -88,30 +70,25 @@ public class ProfilesSubjectAlternativeNameTest {
      * <Algorithm>SHA-1</Algorithm>
      */
     @Test
-    public void testCertificateSubjectAlternaiveNameValid() throws ProfileException, IOException, NoSuchAlgorithmException {
-        Profile profile = profiles.get(2);
+    public void testCertificateIssuerAlternaiveNameValid() throws ProfileException, IOException, NoSuchAlgorithmException {
+        Profile profile = profiles.get(1);
         Extension ext;
         Result result = null;
 
 
         GeneralNamesBuilder generalNamesBuilder = new GeneralNamesBuilder();
-        // otherName                       [0]     OtherName,
-        ASN1EncodableVector asn1EncodableVector = new ASN1EncodableVector();
-        asn1EncodableVector.add(new ASN1ObjectIdentifier("1.3.6.1.4.1.311.20.2.3"));
-        asn1EncodableVector.add(new DERUTF8String("cn=david, o=cryptable"));
-        generalNamesBuilder.addName(new GeneralName(GeneralName.otherName, new DERSequence(asn1EncodableVector)));
         // rfc822Name                      [1]     IA5String,
-        generalNamesBuilder.addName(new GeneralName(GeneralName.rfc822Name, "david.tillemans@cryptable.org"));
+        generalNamesBuilder.addName(new GeneralName(GeneralName.rfc822Name, "ca@cryptable.org"));
         // dNSName                         [2]     IA5String,
-        generalNamesBuilder.addName(new GeneralName(GeneralName.dNSName, "www.cryptable.org"));
+        generalNamesBuilder.addName(new GeneralName(GeneralName.dNSName, "cryptable.org"));
         // directoryName                   [4]     Name,
-        generalNamesBuilder.addName(new GeneralName(GeneralName.directoryName, "cn=david, o=cryptable"));
+        generalNamesBuilder.addName(new GeneralName(GeneralName.directoryName, "cn=alternative,o=cryptable"));
         // uniformResourceIdentifier       [6]     IA5String,
-        generalNamesBuilder.addName(new GeneralName(GeneralName.uniformResourceIdentifier, "http://www.cryptable.org"));
+        generalNamesBuilder.addName(new GeneralName(GeneralName.uniformResourceIdentifier, "https://www.cryptable.org"));
         // iPAddress                       [7]     OCTET STRING,
-        generalNamesBuilder.addName(new GeneralName(GeneralName.iPAddress, "1.2.3.4"));
+        generalNamesBuilder.addName(new GeneralName(GeneralName.iPAddress, "10.2.3.4"));
 
-        Extension extension = new Extension(Extension.subjectAlternativeName, false, new DEROctetString(generalNamesBuilder.build()));
+        Extension extension = new Extension(Extension.issuerAlternativeName, false, new DEROctetString(generalNamesBuilder.build()));
         Extensions extensions = new Extensions(extension);
 
         CertTemplate certTemplate = certTemplateBuilder.setExtensions(extensions).build();
@@ -119,7 +96,7 @@ public class ProfilesSubjectAlternativeNameTest {
         List<Result> results = profile.validateCertificateExtensions(certTemplate);
 
         for (Result res : results) {
-            if (((Extension)res.getValue()).getExtnId().equals(Extension.subjectAlternativeName)) {
+            if (((Extension)res.getValue()).getExtnId().equals(Extension.issuerAlternativeName)) {
                 result = res;
                 break;
             }
@@ -129,18 +106,20 @@ public class ProfilesSubjectAlternativeNameTest {
         assertNotNull(result);
 
         ext = (Extension)result.getValue();
-        assertEquals(Extension.subjectAlternativeName, ((Extension) result.getValue()).getExtnId());
+
+        assertEquals(Extension.issuerAlternativeName, ((Extension) result.getValue()).getExtnId());
         assertEquals(Result.Decisions.VALID, result.getDecision());
         assertFalse(ext.isCritical());
 
         // Verify the extension is not changed
-        // System.out.print(ASN1Dump.dumpAsString(ext.getParsedValue()));
         GeneralNames generalNames = GeneralNames.getInstance(ext.getParsedValue());
-        assertEquals(generalNames.getNames().length, 6);
+        assertEquals(generalNames.getNames().length, 5);
+        boolean ipAddressOK = false;
+        boolean eMailsOK = false;
+        boolean domainNameOK = false;
+        boolean dNameOK = false;
+        boolean urlOK = false;
         for (GeneralName generalName : generalNames.getNames()) {
-            if (generalName.getTagNo() == GeneralName.otherName) {
-                assertTrue(generalName.getName().equals(new DERSequence(asn1EncodableVector)));
-            }
             if (generalName.getTagNo() == GeneralName.iPAddress) {
                 byte[] ipAddress = DEROctetString.getInstance(generalName.getName()).getOctets();
                 int ip1 = ipAddress[0] & 0xFF;
@@ -148,25 +127,31 @@ public class ProfilesSubjectAlternativeNameTest {
                 int ip3 = ipAddress[2] & 0xFF;
                 int ip4 = ipAddress[3] & 0xFF;
                 String ip = ip1 + "." + ip2 + "." + ip3 + "." +ip4;
-                assertTrue(ip.equals("1.2.3.4"));
+                assertTrue(ip.equals("10.2.3.4"));
+                ipAddressOK = true;
             }
             if (generalName.getTagNo() == GeneralName.rfc822Name) {
                 String rfc822Name = DERIA5String.getInstance(generalName.getName()).getString();
-                assertEquals("david.tillemans@cryptable.org", rfc822Name);
+                assertEquals("ca@cryptable.org", rfc822Name);
+                eMailsOK = true;
             }
             if (generalName.getTagNo() == GeneralName.directoryName) {
                 X500Name directoryName = X500Name.getInstance(generalName.getName());
-                assertEquals(new X500Name("cn=david, o=cryptable"), directoryName);
+                assertEquals(new X500Name("cn=alternative,o=cryptable"), directoryName);
+                dNameOK = true;
             }
             if (generalName.getTagNo() == GeneralName.dNSName) {
                 String dNSName = DERIA5String.getInstance(generalName.getName()).getString();
-                assertEquals("www.cryptable.org", dNSName);
+                assertEquals("cryptable.org", dNSName);
+                domainNameOK = true;
             }
             if (generalName.getTagNo() == GeneralName.uniformResourceIdentifier) {
                 String uniformResourceIdentifier = DERIA5String.getInstance(generalName.getName()).getString();
-                assertEquals("http://www.cryptable.org", uniformResourceIdentifier);
+                assertEquals("https://www.cryptable.org", uniformResourceIdentifier);
+                urlOK = true;
             }
         }
+        assertTrue(ipAddressOK || eMailsOK || dNameOK || domainNameOK || urlOK);
     }
 
     /**
@@ -175,36 +160,20 @@ public class ProfilesSubjectAlternativeNameTest {
      * <Algorithm>SHA-1</Algorithm>
      */
     @Test
-    public void testCertificateSubjectAlternaiveNameOverruled() throws ProfileException, IOException, NoSuchAlgorithmException {
-        Profile profile = profiles.get(1);
+    public void testCertificateIssuerAlternaiveNameOverruled() throws ProfileException, IOException, NoSuchAlgorithmException {
+        Profile profile = profiles.get(2);
         Extension ext;
         Result result = null;
 
 
         GeneralNamesBuilder generalNamesBuilder = new GeneralNamesBuilder();
+        generalNamesBuilder.addName(new GeneralName(GeneralName.iPAddress, "10.2.3.4"));
+        generalNamesBuilder.addName(new GeneralName(GeneralName.rfc822Name, "ca@cryptable.org"));
+        generalNamesBuilder.addName(new GeneralName(GeneralName.directoryName, "cn=alternative,o=cryptable"));
+        generalNamesBuilder.addName(new GeneralName(GeneralName.dNSName, "cryptable.org"));
+        generalNamesBuilder.addName(new GeneralName(GeneralName.uniformResourceIdentifier, "https://www.cryptable.org"));
 
-        // Domain controller GUID
-        ASN1EncodableVector asn1EncodableVector = new ASN1EncodableVector();
-        asn1EncodableVector.add(new ASN1ObjectIdentifier("1.3.6.1.4.1.311.25.1"));
-        UUID uuid = UUID.fromString("020002b6-7f41-456b-9b8f-2f50862b60c0");
-        ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[16]);
-        byteBuffer.putLong(uuid.getMostSignificantBits()).putLong(uuid.getLeastSignificantBits());
-        asn1EncodableVector.add(new DEROctetString(byteBuffer.array()));
-
-        // otherName                       [0]     OtherName,
-        generalNamesBuilder.addName(new GeneralName(GeneralName.otherName, new DERSequence(asn1EncodableVector)));
-        // rfc822Name                      [1]     IA5String,
-        generalNamesBuilder.addName(new GeneralName(GeneralName.rfc822Name, "david.tillemans@cryptable.org"));
-        // dNSName                         [2]     IA5String,
-        generalNamesBuilder.addName(new GeneralName(GeneralName.dNSName, "www.cryptable.org"));
-        // directoryName                   [4]     Name,
-        generalNamesBuilder.addName(new GeneralName(GeneralName.directoryName, "cn=david, o=cryptable"));
-        // uniformResourceIdentifier       [6]     IA5String,
-        generalNamesBuilder.addName(new GeneralName(GeneralName.uniformResourceIdentifier, "http://www.cryptable.org"));
-        // iPAddress                       [7]     OCTET STRING,
-        generalNamesBuilder.addName(new GeneralName(GeneralName.iPAddress, "1.2.3.4"));
-
-        Extension extension = new Extension(Extension.subjectAlternativeName, false, new DEROctetString(generalNamesBuilder.build()));
+        Extension extension = new Extension(Extension.issuerAlternativeName, false, new DEROctetString(generalNamesBuilder.build()));
         Extensions extensions = new Extensions(extension);
 
         CertTemplate certTemplate = certTemplateBuilder.setExtensions(extensions).build();
@@ -212,7 +181,7 @@ public class ProfilesSubjectAlternativeNameTest {
         List<Result> results = profile.validateCertificateExtensions(certTemplate);
 
         for (Result res : results) {
-            if (((Extension)res.getValue()).getExtnId().equals(Extension.subjectAlternativeName)) {
+            if (((Extension)res.getValue()).getExtnId().equals(Extension.issuerAlternativeName)) {
                 result = res;
                 break;
             }
@@ -222,7 +191,7 @@ public class ProfilesSubjectAlternativeNameTest {
         assertNotNull(result);
 
         ext = (Extension)result.getValue();
-        assertEquals(Extension.subjectAlternativeName, ((Extension) result.getValue()).getExtnId());
+        assertEquals(Extension.issuerAlternativeName, ((Extension) result.getValue()).getExtnId());
         assertEquals(Result.Decisions.OVERRULED, result.getDecision());
         assertFalse(ext.isCritical());
 
@@ -230,30 +199,38 @@ public class ProfilesSubjectAlternativeNameTest {
         // System.out.print(ASN1Dump.dumpAsString(ext.getParsedValue()));
         GeneralNames generalNames = GeneralNames.getInstance(ext.getParsedValue());
         assertEquals(generalNames.getNames().length, 4);
+        boolean ipAddressOK = false;
+        boolean eMailsOK = false;
+        boolean dNameOK = false;
+        boolean urlOK = false;
         for (GeneralName generalName : generalNames.getNames()) {
-            if (generalName.getTagNo() == GeneralName.otherName) {
-                assertTrue(generalName.getName().equals(new DERSequence(asn1EncodableVector)));
-            }
             if (generalName.getTagNo() == GeneralName.iPAddress) {
-                assertTrue(false);
-
+                byte[] ipAddress = DEROctetString.getInstance(generalName.getName()).getOctets();
+                int ip1 = ipAddress[0] & 0xFF;
+                int ip2 = ipAddress[1] & 0xFF;
+                int ip3 = ipAddress[2] & 0xFF;
+                int ip4 = ipAddress[3] & 0xFF;
+                String ip = ip1 + "." + ip2 + "." + ip3 + "." +ip4;
+                assertTrue(ip.equals("10.2.3.4"));
+                ipAddressOK = true;
             }
             if (generalName.getTagNo() == GeneralName.rfc822Name) {
                 String rfc822Name = DERIA5String.getInstance(generalName.getName()).getString();
-                assertTrue(rfc822Name.equals("david.tillemans@cryptable.org"));
+                assertEquals("ca@cryptable.org", rfc822Name);
+                eMailsOK = true;
             }
             if (generalName.getTagNo() == GeneralName.directoryName) {
-                assertTrue(false);
-            }
-            if (generalName.getTagNo() == GeneralName.dNSName) {
-                String dNSName = DERIA5String.getInstance(generalName.getName()).getString();
-                assertEquals("www.cryptable.org", dNSName);
+                X500Name directoryName = X500Name.getInstance(generalName.getName());
+                assertEquals(new X500Name("cn=alternative,o=cryptable"), directoryName);
+                dNameOK = true;
             }
             if (generalName.getTagNo() == GeneralName.uniformResourceIdentifier) {
                 String uniformResourceIdentifier = DERIA5String.getInstance(generalName.getName()).getString();
-                assertEquals("http://www.cryptable.org", uniformResourceIdentifier);
+                assertEquals("https://www.cryptable.org", uniformResourceIdentifier);
+                urlOK = true;
             }
         }
+        assertTrue(ipAddressOK || eMailsOK || dNameOK || urlOK);
     }
 
     /**
@@ -262,30 +239,25 @@ public class ProfilesSubjectAlternativeNameTest {
      * <Algorithm>SHA-1</Algorithm>
      */
     @Test
-    public void testCertificateSubjectAlternaiveNameEmpty() throws ProfileException, IOException, NoSuchAlgorithmException {
+    public void testCertificateIssuerAlternaiveNameEmpty() throws ProfileException, IOException, NoSuchAlgorithmException {
         Profile profile = profiles.get(3);
         Extension ext;
         Result result = null;
 
 
         GeneralNamesBuilder generalNamesBuilder = new GeneralNamesBuilder();
+        // rfc822Name                      [1]     IA5String,
+        generalNamesBuilder.addName(new GeneralName(GeneralName.rfc822Name, "ca@cryptable.org"));
+        // dNSName                         [2]     IA5String,
+        generalNamesBuilder.addName(new GeneralName(GeneralName.dNSName, "cryptable.org"));
+        // directoryName                   [4]     Name,
+        generalNamesBuilder.addName(new GeneralName(GeneralName.directoryName, "cn=alternative,o=cryptable"));
+        // uniformResourceIdentifier       [6]     IA5String,
+        generalNamesBuilder.addName(new GeneralName(GeneralName.uniformResourceIdentifier, "https://www.cryptable.org"));
+        // iPAddress                       [7]     OCTET STRING,
+        generalNamesBuilder.addName(new GeneralName(GeneralName.iPAddress, "10.2.3.4"));
 
-        // Domain controller GUID
-        ASN1EncodableVector asn1EncodableVector = new ASN1EncodableVector();
-        asn1EncodableVector.add(new ASN1ObjectIdentifier("1.3.6.1.4.1.311.25.1"));
-        UUID uuid = UUID.fromString("020002b6-7f41-456b-9b8f-2f50862b60c0");
-        ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[16]);
-        byteBuffer.putLong(uuid.getMostSignificantBits()).putLong(uuid.getLeastSignificantBits());
-        asn1EncodableVector.add(new DEROctetString(byteBuffer.array()));
-
-        generalNamesBuilder.addName(new GeneralName(GeneralName.otherName, new DERSequence(asn1EncodableVector)));
-        generalNamesBuilder.addName(new GeneralName(GeneralName.iPAddress, "1.2.3.4"));
-        generalNamesBuilder.addName(new GeneralName(GeneralName.rfc822Name, "david.tillemans@cryptable.org"));
-        generalNamesBuilder.addName(new GeneralName(GeneralName.directoryName, "cn=david, o=cryptable"));
-        generalNamesBuilder.addName(new GeneralName(GeneralName.dNSName, "www.cryptable.org"));
-        generalNamesBuilder.addName(new GeneralName(GeneralName.uniformResourceIdentifier, "http://www.cryptable.org"));
-
-        Extension extension = new Extension(Extension.subjectAlternativeName, false, new DEROctetString(generalNamesBuilder.build()));
+        Extension extension = new Extension(Extension.issuerAlternativeName, false, new DEROctetString(generalNamesBuilder.build()));
         Extensions extensions = new Extensions(extension);
 
         CertTemplate certTemplate = certTemplateBuilder.setExtensions(extensions).build();
@@ -293,7 +265,7 @@ public class ProfilesSubjectAlternativeNameTest {
         List<Result> results = profile.validateCertificateExtensions(certTemplate);
 
         for (Result res : results) {
-            if (((Extension)res.getValue()).getExtnId().equals(Extension.subjectAlternativeName)) {
+            if (((Extension)res.getValue()).getExtnId().equals(Extension.issuerAlternativeName)) {
                 result = res;
                 break;
             }
@@ -303,18 +275,20 @@ public class ProfilesSubjectAlternativeNameTest {
         assertNotNull(result);
 
         ext = (Extension)result.getValue();
-        assertEquals(Extension.subjectAlternativeName, ((Extension) result.getValue()).getExtnId());
+        assertEquals(Extension.issuerAlternativeName, ((Extension) result.getValue()).getExtnId());
         assertEquals(Result.Decisions.VALID, result.getDecision());
         assertFalse(ext.isCritical());
 
         // Verify the extension is not changed
         // System.out.print(ASN1Dump.dumpAsString(ext.getParsedValue()));
         GeneralNames generalNames = GeneralNames.getInstance(ext.getParsedValue());
-        assertEquals(generalNames.getNames().length, 6);
+        assertEquals(generalNames.getNames().length, 5);
+        boolean ipAddressOK = false;
+        boolean eMailsOK = false;
+        boolean domainNameOK = false;
+        boolean dNameOK = false;
+        boolean urlOK = false;
         for (GeneralName generalName : generalNames.getNames()) {
-            if (generalName.getTagNo() == GeneralName.otherName) {
-                assertTrue(generalName.getName().equals(new DERSequence(asn1EncodableVector)));
-            }
             if (generalName.getTagNo() == GeneralName.iPAddress) {
                 byte[] ipAddress = DEROctetString.getInstance(generalName.getName()).getOctets();
                 int ip1 = ipAddress[0] & 0xFF;
@@ -322,24 +296,31 @@ public class ProfilesSubjectAlternativeNameTest {
                 int ip3 = ipAddress[2] & 0xFF;
                 int ip4 = ipAddress[3] & 0xFF;
                 String ip = ip1 + "." + ip2 + "." + ip3 + "." +ip4;
-                assertTrue(ip.equals("1.2.3.4"));
+                assertTrue(ip.equals("10.2.3.4"));
+                ipAddressOK = true;
             }
             if (generalName.getTagNo() == GeneralName.rfc822Name) {
                 String rfc822Name = DERIA5String.getInstance(generalName.getName()).getString();
-                assertEquals("david.tillemans@cryptable.org", rfc822Name);
-            }
-            if (generalName.getTagNo() == GeneralName.directoryName) {
-                X500Name directoryName = X500Name.getInstance(generalName.getName());
-                assertEquals(new X500Name("cn=david, o=cryptable"), directoryName);
+                assertEquals("ca@cryptable.org", rfc822Name);
+                eMailsOK = true;
             }
             if (generalName.getTagNo() == GeneralName.dNSName) {
                 String dNSName = DERIA5String.getInstance(generalName.getName()).getString();
-                assertEquals("www.cryptable.org", dNSName);
+                assertEquals("cryptable.org", dNSName);
+                domainNameOK = true;
+            }
+            if (generalName.getTagNo() == GeneralName.directoryName) {
+                X500Name directoryName = X500Name.getInstance(generalName.getName());
+                assertEquals(new X500Name("cn=alternative,o=cryptable"), directoryName);
+                dNameOK = true;
             }
             if (generalName.getTagNo() == GeneralName.uniformResourceIdentifier) {
                 String uniformResourceIdentifier = DERIA5String.getInstance(generalName.getName()).getString();
-                assertEquals("http://www.cryptable.org", uniformResourceIdentifier);
+                assertEquals("https://www.cryptable.org", uniformResourceIdentifier);
+                urlOK = true;
             }
         }
+        assertTrue(ipAddressOK || eMailsOK || dNameOK || domainNameOK || urlOK);
     }
+
 }

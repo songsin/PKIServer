@@ -107,7 +107,7 @@ public class ProfilesSubjectKeyIdentifierTest {
             false,
             new DEROctetString(x509ExtensionUtils.createTruncatedSubjectKeyIdentifier(subjectPublicKeyInfo)));
         extensions = new Extensions(extension);
-        certTemplateSHA1 = certTemplateBuilder.setPublicKey(subjectPublicKeyInfo)
+        certTemplateTruncatedSHA1 = certTemplateBuilder.setPublicKey(subjectPublicKeyInfo)
             .setExtensions(extensions)
             .build();
 
@@ -206,10 +206,10 @@ public class ProfilesSubjectKeyIdentifierTest {
         Extension ext = null;
         Result result = null;
 
-        List<Result> results = profile.validateCertificateExtensions(certTemplateSHA1);
+        List<Result> results = profile.validateCertificateExtensions(certTemplateTruncatedSHA1);
 
         for (Result res : results) {
-            if (((Extension)res.getValue()).getExtnId().equals(Extension.subjectKeyIdentifier)) {
+            if (((Extension)res.getValue() != null) &&((Extension)res.getValue()).getExtnId().equals(Extension.subjectKeyIdentifier)) {
                 result = res;
             }
         }

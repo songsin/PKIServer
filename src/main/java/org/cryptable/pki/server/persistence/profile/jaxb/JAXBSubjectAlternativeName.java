@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JAXBSubjectAlternativeName {
 
-    @XmlElement(name="E_mail")
+    @XmlElement(name="E_Mail")
     @XmlJavaTypeAdapter(BooleanLeaveDeleteAdapter.class)
     private Boolean keepEmail;
 
