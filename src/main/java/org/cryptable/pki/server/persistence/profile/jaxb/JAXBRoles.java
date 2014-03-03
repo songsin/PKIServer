@@ -10,4 +10,5 @@ import javax.xml.bind.annotation.XmlAccessorType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JAXBRoles {
+    // TODO remove, let it handle by Spring Security
 }

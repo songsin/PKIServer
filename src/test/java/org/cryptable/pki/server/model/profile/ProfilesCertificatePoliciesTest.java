@@ -65,7 +65,23 @@ public class ProfilesCertificatePoliciesTest {
     /**
      * Test a normal Certificate policy
      *
-     * <Subject_Key_Identifier>160 bit SHA-1</Subject_Key_Identifier>
+     * <Certificate_Policies Critical="Yes">
+     *   <Certificate_Policy OID="1.2.3.4.1.2.3.4.1">
+     *     <Qualifier ID="1.3.6.1.5.5.7.2.1">
+     *       <URI>https://www.google.be</URI>
+     *     </Qualifier>
+     *     <Qualifier ID="1.3.6.1.5.5.7.2.2">
+     *       <Organisation>Cryptable</Organisation>
+     *       <Notice_Numbers>11,23,44</Notice_Numbers>
+     *       <Explicit_Text>This is a test certificate</Explicit_Text>
+     *     </Qualifier>
+     *   </Certificate_Policy>
+     *   <Certificate_Policy OID="2.3.4.2.4.5.1">
+     *     <Qualifier ID="1.3.6.1.5.5.7.2.1">
+     *       <URI>http://www.cryptable.org/cps.pdf</URI>
+     *     </Qualifier>
+     *   </Certificate_Policy>
+     * </Certificate_Policies>
      */
     @Test
     public void testCertificatePoliciesValid() throws ProfileException, IOException, NoSuchAlgorithmException, CertificateEncodingException {

@@ -2,6 +2,7 @@ package org.cryptable.pki.server.model.profile.impl;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.crmf.CertTemplate;
+import org.bouncycastle.asn1.microsoft.MicrosoftObjectIdentifiers;
 import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
@@ -21,7 +22,6 @@ import org.joda.time.Period;
 import org.joda.time.format.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.jvm.hotspot.debugger.cdbg.basic.ResolveListener;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -58,6 +58,16 @@ public class ProfileJAXB implements Profile {
             extensionTemplates.put(Extension.issuerAlternativeName, new IssuerAlternativeNameJAXB(jaxbProfile.getCertificateProfile().getExtensions().getIssuerAlternativeName()));
         if (jaxbProfile.getCertificateProfile().getExtensions().getExtendedKeyUsage() != null)
             extensionTemplates.put(Extension.extendedKeyUsage, new ExtendedKeyUsageJAXB(jaxbProfile.getCertificateProfile().getExtensions().getExtendedKeyUsage()));
+        if (jaxbProfile.getCertificateProfile().getExtensions().getCrlDistributionPoints() != null)
+            extensionTemplates.put(Extension.cRLDistributionPoints, new CRLDistributionPointJAXB(jaxbProfile.getCertificateProfile().getExtensions().getCrlDistributionPoints(), caCertificate));
+        if (jaxbProfile.getCertificateProfile().getExtensions().getBasicConstraints() != null)
+            extensionTemplates.put(Extension.basicConstraints, new BasicConstraintsJAXB(jaxbProfile.getCertificateProfile().getExtensions().getBasicConstraints()));
+        if (jaxbProfile.getCertificateProfile().getExtensions().getQualifiedStatements() != null)
+            extensionTemplates.put(Extension.qCStatements, new QualifiedStatementsJAXB(jaxbProfile.getCertificateProfile().getExtensions().getQualifiedStatements()));
+        if (jaxbProfile.getCertificateProfile().getExtensions().getCertificateTemplateName() != null)
+            extensionTemplates.put(MicrosoftObjectIdentifiers.microsoftCertTemplateV1, new CertificateTemplateJAXB(jaxbProfile.getCertificateProfile().getExtensions().getCertificateTemplateName()));
+        if (jaxbProfile.getCertificateProfile().getExtensions().getAuthorityInfoAccess() != null)
+            extensionTemplates.put(Extension.authorityInfoAccess, new AuthorityInfoAccessJAXB(jaxbProfile.getCertificateProfile().getExtensions().getAuthorityInfoAccess()));
     }
 
     @Override

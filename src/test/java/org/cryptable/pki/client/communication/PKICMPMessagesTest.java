@@ -80,7 +80,7 @@ public class PKICMPMessagesTest {
     @Test
     public void testKeyGeneration() throws NoSuchProviderException, NoSuchAlgorithmException {
         KeyPairGenerator kGen = KeyPairGenerator.getInstance("RSA", "BC");
-        kGen.initialize(2048);
+        kGen.initialize(8192);
         KeyPair kp = kGen.generateKeyPair();
         System.out.print(kp.getPrivate().toString());
     }

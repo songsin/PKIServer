@@ -70,7 +70,7 @@ public class ProfilesIssuerAlternativeNameTest {
      * <Algorithm>SHA-1</Algorithm>
      */
     @Test
-    public void testCertificateIssuerAlternaiveNameValid() throws ProfileException, IOException, NoSuchAlgorithmException {
+    public void testCertificateIssuerAlternativeNameValid() throws ProfileException, IOException, NoSuchAlgorithmException {
         Profile profile = profiles.get(1);
         Extension ext;
         Result result = null;
@@ -239,7 +239,7 @@ public class ProfilesIssuerAlternativeNameTest {
      * <Algorithm>SHA-1</Algorithm>
      */
     @Test
-    public void testCertificateIssuerAlternaiveNameEmpty() throws ProfileException, IOException, NoSuchAlgorithmException {
+    public void testCertificateIssuerAlternativeNameEmpty() throws ProfileException, IOException, NoSuchAlgorithmException {
         Profile profile = profiles.get(3);
         Extension ext;
         Result result = null;

@@ -1,13 +1,9 @@
 package org.cryptable.pki.server.model.profile;
 
 import org.bouncycastle.asn1.crmf.CertTemplate;
-import org.bouncycastle.asn1.x509.Extensions;
-import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
 import java.util.List;
 
 /**

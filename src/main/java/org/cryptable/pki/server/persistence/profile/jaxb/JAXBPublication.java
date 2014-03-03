@@ -10,4 +10,5 @@ import javax.xml.bind.annotation.XmlAccessorType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JAXBPublication {
+    // TODO remove, but better to ignore
 }

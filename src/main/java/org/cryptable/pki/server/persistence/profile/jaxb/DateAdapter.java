@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * Date: 27/12/13
  * Hour: 23:03
  */
-class DateAdapter extends XmlAdapter<String, DateTime> {
+public class DateAdapter extends XmlAdapter<String, DateTime> {
 
     private final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyyMMddHHmmss").withZoneUTC();
 

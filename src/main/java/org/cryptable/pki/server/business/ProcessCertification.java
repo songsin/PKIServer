@@ -63,6 +63,7 @@ public class ProcessCertification {
                 throw new ProcessRequestException("Unknown profile according to certificate Id");
 
             X509v3CertificateBuilder x509v3CertificateBuilder = new X509v3CertificateBuilder(
+                    // Issuer Name
                     JcaX500NameUtil.getSubject(pkiKeyStore.getCACertificate()),
                     // Serial number
                     BigInteger.valueOf(pkiKeyStore.getSecureRandom().nextLong()),

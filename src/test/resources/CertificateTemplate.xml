@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<Profiles>
+  <Profile ID="1" Name="Certificate Template 1">
+    <Certificate>
+      <Validity/>
+      <Key_Length/>
+      <Algorithm>SHA-1</Algorithm>
+      <Keys>Store Private Keys</Keys>
+      <Extensions>
+        <Certificate_Template_Name>User</Certificate_Template_Name>
+      </Extensions>
+    </Certificate>
+    <PIN_Code>
+      <User_PIN/>
+      <Unblocking_PIN/>
+      <Master_PIN/>
+    </PIN_Code>
+    <CRL>
+      <Validity>
+        <Year>0</Year>
+        <Month>2</Month>
+        <Day>0</Day>
+        <Hour>0</Hour>
+        <Minute>0</Minute>
+        <Second>0</Second>
+      </Validity>
+      <Expiry_Date/>
+      <Update_Period/>
+      <Publication/>
+      <Extensions/>
+    </CRL>
+    <Publication/>
+    <Roles/>
+    <Key_Origin/>
+  </Profile>
+  <Profile ID="2" Name="Certificate Template 2">
+    <Certificate>
+      <Validity/>
+      <Key_Length/>
+      <Algorithm>SHA-1</Algorithm>
+      <Keys>Store Private Keys</Keys>
+      <Extensions>
+        <Certificate_Template_Name>DomainController</Certificate_Template_Name>
+      </Extensions>
+    </Certificate>
+    <PIN_Code>
+      <User_PIN/>
+      <Unblocking_PIN/>
+      <Master_PIN/>
+    </PIN_Code>
+    <CRL>
+      <Validity>
+        <Year>0</Year>
+        <Month>2</Month>
+        <Day>0</Day>
+        <Hour>0</Hour>
+        <Minute>0</Minute>
+        <Second>0</Second>
+      </Validity>
+      <Expiry_Date/>
+      <Update_Period/>
+      <Publication/>
+      <Extensions/>
+    </CRL>
+    <Publication/>
+    <Roles/>
+    <Key_Origin/>
+  </Profile>
+</Profiles>
