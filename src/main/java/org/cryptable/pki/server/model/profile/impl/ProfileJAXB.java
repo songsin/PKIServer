@@ -228,12 +228,14 @@ public class ProfileJAXB implements Profile {
             		}
             		else {
                 		// Minimum KeyLength configuration
-                        result.setDecision(Result.Decisions.VALID);
+            			logger.info("Minimum KeyLength configuration.");
+            			result.setDecision(Result.Decisions.VALID);
                         result.setValue(keyLength);            		
             		}
             	}
             	else {
             		// Maximum KeyLength configuration
+        			logger.info("Maximum KeyLength configuration.");
                     result.setDecision(Result.Decisions.VALID);
                     result.setValue(keyLength);            		
             	}
