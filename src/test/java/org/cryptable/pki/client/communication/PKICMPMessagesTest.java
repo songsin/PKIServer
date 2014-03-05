@@ -77,13 +77,13 @@ public class PKICMPMessagesTest {
 	public void tearDown() throws Exception {
 	}
 
-    @Test
-    public void testKeyGeneration() throws NoSuchProviderException, NoSuchAlgorithmException {
-        KeyPairGenerator kGen = KeyPairGenerator.getInstance("RSA", "BC");
-        kGen.initialize(8192);
-        KeyPair kp = kGen.generateKeyPair();
-        System.out.print(kp.getPrivate().toString());
-    }
+//    @Test
+//    public void testKeyGeneration() throws NoSuchProviderException, NoSuchAlgorithmException {
+//        KeyPairGenerator kGen = KeyPairGenerator.getInstance("RSA", "BC");
+//        kGen.initialize(8192);
+//        KeyPair kp = kGen.generateKeyPair();
+//        System.out.print(kp.getPrivate().toString());
+//    }
 
     //The test response creation for testing the decoding of the responses
     private byte[] createProtectedPKIMessage(byte[] senderNonce, byte[] transactionId, PKIBody pkiBody) throws CMPException, OperatorCreationException, IOException, CertificateEncodingException {

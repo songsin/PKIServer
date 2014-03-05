@@ -209,8 +209,6 @@ public class ProfileJAXB implements Profile {
     @Override
     public Result validateCertificateKeyLength(CertTemplate certTemplate) throws ProfileException, IOException {
         Result result = new Result(Result.Decisions.INVALID, null);
-        RSAKeyParameters param=(RSAKeyParameters) PublicKeyFactory.createKey(certTemplate.getPublicKey());
-        int keyLength = param.getModulus().bitLength();
 
         if ((jaxbProfile.getCertificateProfile() != null) &&
             (jaxbProfile.getCertificateProfile().getKeyLengthProfile() != null))  {
@@ -218,21 +216,48 @@ public class ProfileJAXB implements Profile {
             Integer minKeyLength = jaxbKeyLength.getMinimumKeyLength();
             Integer maxKeyLength = jaxbKeyLength.getMaximumKeyLength();
 
-            logger.debug("Check keylength [" + String.valueOf(minKeyLength) + "|" + String.valueOf(maxKeyLength) + "|" + String.valueOf(keyLength) + "|");
-
-            if (minKeyLength != null && keyLength < minKeyLength ) {
-                result.setDecision(Result.Decisions.INVALID);
-                result.setValue(String.valueOf("Invalid minimum key length [" + String.valueOf(minKeyLength) + ":"
-                    + String.valueOf(keyLength) + "]"));
-            }
-            else if (maxKeyLength != null && keyLength > maxKeyLength) {
-                result.setDecision(Result.Decisions.INVALID);
-                result.setValue(String.valueOf("Invalid maximum key length [" + String.valueOf(maxKeyLength) + ":"
-                    + String.valueOf(keyLength) + "]"));
+            if (certTemplate.getPublicKey() == null) {
+            	// Empty public key
+            	Integer keyLength = jaxbKeyLength.getMaximumKeyLength();
+            	if (keyLength == null) {
+            		keyLength = jaxbKeyLength.getMinimumKeyLength();
+            		if (keyLength == null) {
+            			logger.error("Empty public key and no key length defined.");
+            			result.setDecision(Result.Decisions.INVALID);
+            			result.setValue(null);
+            		}
+            		else {
+                		// Minimum KeyLength configuration
+                        result.setDecision(Result.Decisions.VALID);
+                        result.setValue(keyLength);            		
+            		}
+            	}
+            	else {
+            		// Maximum KeyLength configuration
+                    result.setDecision(Result.Decisions.VALID);
+                    result.setValue(keyLength);            		
+            	}
             }
             else {
-                result.setDecision(Result.Decisions.VALID);
-                result.setValue(keyLength);
+            	// Public key is defined
+                RSAKeyParameters param=(RSAKeyParameters) PublicKeyFactory.createKey(certTemplate.getPublicKey());
+                int keyLength = param.getModulus().bitLength();
+
+                logger.debug("Check keylength [" + String.valueOf(minKeyLength) + "|" + String.valueOf(maxKeyLength) + "|" + String.valueOf(keyLength) + "|");
+                if (minKeyLength != null && keyLength < minKeyLength ) {
+                    result.setDecision(Result.Decisions.INVALID);
+                    result.setValue(String.valueOf("Invalid minimum key length [" + String.valueOf(minKeyLength) + ":"
+                        + String.valueOf(keyLength) + "]"));
+                }
+                else if (maxKeyLength != null && keyLength > maxKeyLength) {
+                    result.setDecision(Result.Decisions.INVALID);
+                    result.setValue(String.valueOf("Invalid maximum key length [" + String.valueOf(maxKeyLength) + ":"
+                        + String.valueOf(keyLength) + "]"));
+                }
+                else {
+                    result.setDecision(Result.Decisions.VALID);
+                    result.setValue(keyLength);
+                }            	
             }
         }
         else {

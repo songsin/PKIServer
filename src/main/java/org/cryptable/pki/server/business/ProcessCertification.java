@@ -7,9 +7,12 @@ import org.bouncycastle.asn1.crmf.CertReqMsg;
 import org.bouncycastle.asn1.crmf.CertTemplate;
 import org.bouncycastle.asn1.crmf.CertTemplateBuilder;
 import org.bouncycastle.asn1.crmf.OptionalValidity;
+import org.bouncycastle.asn1.util.ASN1Dump;
+import org.bouncycastle.asn1.util.Dump;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x509.Time;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
@@ -76,57 +79,70 @@ public class ProcessCertification {
     private CertResponse processRequest(ContentSigner sigGen, CertReqMsg certReqMsg) throws ProcessRequestException, NoSuchAlgorithmException, IOException, ProfileException {
     	
     	Result.Decisions overallResult = Result.Decisions.VALID;
-    	
-        Profile certificateProfile = certificationProfiles.get(
-        		certReqMsg.getCertReq().getCertReqId().getPositiveValue().intValue());
 
-        if (certificateProfile == null)
+        CertTemplate tempCertTemplate = certReqMsg.getCertReq().getCertTemplate();
+
+        Profile certificateProfile = certificationProfiles.get(certReqMsg.getCertReq().getCertReqId().getPositiveValue().intValue());
+        if (certificateProfile == null) {
+        	logger.error("Unknown profile according to certificate Id [" + 
+        		certReqMsg.getCertReq().getCertReqId().getPositiveValue().toString() + "]");        	
             throw new ProcessRequestException("Unknown profile according to certificate Id");
-
+        }
+        
         // Prepare Certificate Template
         CertTemplateBuilder certTemplateBuilder = new CertTemplateBuilder();
         // Static stuff
-        certTemplateBuilder.setVersion(certReqMsg.getCertReq().getCertTemplate().getVersion());
+        certTemplateBuilder.setVersion(2);
         X500Name issuerName = new X500Name(pkiKeyStore.getCACertificate().getIssuerX500Principal().getName());
         certTemplateBuilder.setIssuer(issuerName);
-        certTemplateBuilder.setSubject(certReqMsg.getCertReq().getCertTemplate().getSubject());
+        certTemplateBuilder.setSubject(tempCertTemplate.getSubject());
 
         // Validation Dates
         // NBefore
-        Result resultNBefore = certificateProfile.validateCertificateNBefore(
-        		certReqMsg.getCertReq().getCertTemplate());
+        Result resultNBefore = certificateProfile.validateCertificateNBefore(tempCertTemplate);
         if (resultNBefore.getDecision() == Result.Decisions.INVALID) {
+        	logger.error((String) resultNBefore.getValue());
         	throw new ProcessRequestException((String) resultNBefore.getValue());
         }
         overallResult = overallResult == Result.Decisions.OVERRULED ? Result.Decisions.OVERRULED 
         		: resultNBefore.getDecision();
         
         // NAfter
-        Result resultNAfter = certificateProfile.validateCertificateNAfter(
-        		certReqMsg.getCertReq().getCertTemplate());
+        Result resultNAfter = certificateProfile.validateCertificateNAfter(tempCertTemplate);
         if (resultNAfter.getDecision() == Result.Decisions.INVALID) {
+        	logger.error((String) resultNAfter.getValue());
         	throw new ProcessRequestException((String) resultNAfter.getValue());
         }
         overallResult = overallResult == Result.Decisions.OVERRULED ? Result.Decisions.OVERRULED 
-        		: resultNBefore.getDecision();
+        		: resultNAftet.getDecision();
         OptionalValidity optionalValidity = new OptionalValidity(
         		new Time((Date)resultNBefore.getValue()), 
         		new Time((Date)resultNAfter.getValue()));
         
         // Fill in dates for validity period validation
         certTemplateBuilder.setValidity(optionalValidity);
-        CertTemplate tempCertTemplate = certTemplateBuilder.build();
+        tempCertTemplate = certTemplateBuilder.build();
 
         // Only verification of time period no overrule results 
         Result resultValidity = certificateProfile.validateCertificateValidity(tempCertTemplate);
         if (resultNAfter.getDecision() == Result.Decisions.INVALID) {
+        	logger.error((String) resultValidity.getValue());
         	throw new ProcessRequestException((String) resultValidity.getValue());
         }
         overallResult = overallResult == Result.Decisions.OVERRULED ? Result.Decisions.OVERRULED 
         		: resultValidity.getDecision();
-        
+
         //Public Key
-        certTemplateBuilder.setPublicKey(certReqMsg.getCertReq().getCertTemplate().getPublicKey());
+        Result resultKeyLength = certificateProfile.validateCertificateKeyLength(tempCertTemplate);
+        if (resultKeyLength.getDecision() == Result.Decisions.INVALID) {
+        	logger.error((String) resultKeyLength.getValue());
+        	throw new ProcessRequestException((String) resultKeyLength.getValue());
+        }
+        overallResult = overallResult == Result.Decisions.OVERRULED ? Result.Decisions.OVERRULED 
+        		: resultKeyLength.getDecision();
+        certTemplateBuilder.setPublicKey(tempCertTemplate.getPublicKey());
+        
+        // Add the extensions to the certificate
         CertTemplate certTemplate = certTemplateBuilder.build();
         List<Result> results = certificateProfile.validateCertificateExtensions(certTemplate);
         List<Extension> extensions = new ArrayList<Extension>();
