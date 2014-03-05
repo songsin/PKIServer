@@ -10,7 +10,7 @@ import org.bouncycastle.asn1.x509.GeneralNamesBuilder;
 import org.cryptable.pki.server.model.profile.ExtensionTemplate;
 import org.cryptable.pki.server.model.profile.ProfileException;
 import org.cryptable.pki.server.model.profile.Result;
-import org.cryptable.pki.server.persistence.profile.jaxb.JAXBSubjectAlternativeName;
+import org.cryptable.pki.server.model.profile.jaxb.JAXBSubjectAlternativeName;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;

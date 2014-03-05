@@ -5,14 +5,15 @@ import org.bouncycastle.asn1.x509.Extension;
 import org.cryptable.pki.server.model.profile.Profile;
 import org.cryptable.pki.server.model.profile.ProfileException;
 import org.cryptable.pki.server.model.profile.Profiles;
-import org.cryptable.pki.server.persistence.profile.jaxb.JAXBProfile;
-import org.cryptable.pki.server.persistence.profile.jaxb.JAXBProfiles;
+import org.cryptable.pki.server.model.profile.jaxb.JAXBProfile;
+import org.cryptable.pki.server.model.profile.jaxb.JAXBProfiles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;

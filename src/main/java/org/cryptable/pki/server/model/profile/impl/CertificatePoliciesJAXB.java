@@ -6,9 +6,9 @@ import org.bouncycastle.asn1.x509.*;
 import org.cryptable.pki.server.model.profile.ExtensionTemplate;
 import org.cryptable.pki.server.model.profile.ProfileException;
 import org.cryptable.pki.server.model.profile.Result;
-import org.cryptable.pki.server.persistence.profile.jaxb.JAXBCertificatePolicies;
-import org.cryptable.pki.server.persistence.profile.jaxb.JAXBCertificatePolicy;
-import org.cryptable.pki.server.persistence.profile.jaxb.JAXBQualifier;
+import org.cryptable.pki.server.model.profile.jaxb.JAXBCertificatePolicies;
+import org.cryptable.pki.server.model.profile.jaxb.JAXBCertificatePolicy;
+import org.cryptable.pki.server.model.profile.jaxb.JAXBQualifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

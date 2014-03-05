@@ -9,8 +9,8 @@ import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.cryptable.pki.server.model.profile.ExtensionTemplate;
 import org.cryptable.pki.server.model.profile.Result;
-import org.cryptable.pki.server.persistence.profile.jaxb.JAXBExtendedKeyUsage;
-import org.cryptable.pki.server.persistence.profile.jaxb.JAXBKeyUsage;
+import org.cryptable.pki.server.model.profile.jaxb.JAXBExtendedKeyUsage;
+import org.cryptable.pki.server.model.profile.jaxb.JAXBKeyUsage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

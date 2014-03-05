@@ -8,7 +8,7 @@ import org.bouncycastle.asn1.x509.*;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.cryptable.pki.server.model.profile.ExtensionTemplate;
 import org.cryptable.pki.server.model.profile.Result;
-import org.cryptable.pki.server.persistence.profile.jaxb.JAXBIssuerAlternativeName;
+import org.cryptable.pki.server.model.profile.jaxb.JAXBIssuerAlternativeName;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;

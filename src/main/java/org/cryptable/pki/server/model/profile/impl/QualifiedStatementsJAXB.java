@@ -13,8 +13,8 @@ import org.bouncycastle.asn1.x509.qualified.QCStatement;
 import org.bouncycastle.asn1.x509.qualified.SemanticsInformation;
 import org.cryptable.pki.server.model.profile.ExtensionTemplate;
 import org.cryptable.pki.server.model.profile.Result;
-import org.cryptable.pki.server.persistence.profile.jaxb.JAXBBasicConstraints;
-import org.cryptable.pki.server.persistence.profile.jaxb.JAXBQualifiedStatements;
+import org.cryptable.pki.server.model.profile.jaxb.JAXBBasicConstraints;
+import org.cryptable.pki.server.model.profile.jaxb.JAXBQualifiedStatements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

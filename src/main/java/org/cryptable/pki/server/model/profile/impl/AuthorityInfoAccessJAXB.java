@@ -5,8 +5,8 @@ import org.bouncycastle.asn1.crmf.CertTemplate;
 import org.bouncycastle.asn1.x509.*;
 import org.cryptable.pki.server.model.profile.ExtensionTemplate;
 import org.cryptable.pki.server.model.profile.Result;
-import org.cryptable.pki.server.persistence.profile.jaxb.JAXBAccessDescription;
-import org.cryptable.pki.server.persistence.profile.jaxb.JAXBAuthorityInfoAccess;
+import org.cryptable.pki.server.model.profile.jaxb.JAXBAccessDescription;
+import org.cryptable.pki.server.model.profile.jaxb.JAXBAuthorityInfoAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
