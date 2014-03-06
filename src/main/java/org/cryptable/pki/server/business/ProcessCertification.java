@@ -1,27 +1,18 @@
 package org.cryptable.pki.server.business;
 
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.cmp.*;
-import org.bouncycastle.asn1.crmf.CertReqMessages;
-import org.bouncycastle.asn1.crmf.CertReqMsg;
 import org.bouncycastle.asn1.crmf.CertTemplate;
 import org.bouncycastle.asn1.crmf.CertTemplateBuilder;
 import org.bouncycastle.asn1.crmf.OptionalValidity;
-import org.bouncycastle.asn1.util.ASN1Dump;
-import org.bouncycastle.asn1.util.Dump;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.Extension;
-import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x509.Time;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
-import org.bouncycastle.cert.jcajce.JcaX500NameUtil;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.cryptable.pki.server.model.profile.ProfileException;
 import org.cryptable.pki.server.model.profile.Profiles;
 import org.cryptable.pki.server.model.profile.Profile;
@@ -35,9 +26,7 @@ import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
 import java.security.cert.CertificateException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -82,7 +71,7 @@ public class ProcessCertification {
 	}
 
     /* private methods */
-    private ProcessCertificationResult processRequest(ContentSigner sigGen, CertTemplate certTemplate, int profile) throws ProcessRequestException, NoSuchAlgorithmException, IOException, ProfileException, NoSuchProviderException, CertificateException {
+    public ProcessCertificationResult processRequest(ContentSigner sigGen, CertTemplate certTemplate, int profile) throws ProcessRequestException, NoSuchAlgorithmException, IOException, ProfileException, NoSuchProviderException, CertificateException {
     	
     	Result.Decisions overallResult = Result.Decisions.VALID;
 
@@ -199,7 +188,9 @@ public class ProcessCertification {
 
     /* public methods */
     public ProcessCertification(PKIKeyStore pkiKeyStore) {
+    	super();
         this.pkiKeyStore = pkiKeyStore;
+        this.certificationProfiles = null;
     }
 
 //    public PKIBody getResponse(PKIBody pkiBody) throws OperatorCreationException, ProcessRequestException, NoSuchAlgorithmException, IOException, ProfileException, NoSuchProviderException {
