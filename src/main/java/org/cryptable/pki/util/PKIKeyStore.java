@@ -25,7 +25,6 @@
 package org.cryptable.pki.util;
 
 import org.bouncycastle.asn1.cmp.CMPCertificate;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -234,5 +233,21 @@ public class PKIKeyStore {
                 + certificate.getSerialNumber().toString() + ":"
                 + certificate.getNotAfter().toString() + "]");
         }
+    }
+    /**
+     * Generate key-pair
+     * 
+     * @param keyLength
+     * @param AlgorithmId
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchProviderException
+     */
+    public KeyPair generateKeyPair(int keyLength, String AlgorithmId) throws NoSuchAlgorithmException, NoSuchProviderException {
+    	KeyPairGenerator kGen = KeyPairGenerator.getInstance(AlgorithmId, provider);
+        kGen.initialize(keyLength);
+        KeyPair kp = kGen.generateKeyPair();
+        logger.debug("<<< Generating keys\n" + kp.getPrivate().toString() + "\n>>> Generating keys");
+        return kp;
     }
 }

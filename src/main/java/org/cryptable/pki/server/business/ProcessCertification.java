@@ -1,6 +1,7 @@
 package org.cryptable.pki.server.business;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.cmp.*;
 import org.bouncycastle.asn1.crmf.CertReqMessages;
 import org.bouncycastle.asn1.crmf.CertReqMsg;
@@ -17,6 +18,7 @@ import org.bouncycastle.asn1.x509.Time;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX500NameUtil;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
@@ -30,7 +32,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -76,16 +82,15 @@ public class ProcessCertification {
 	}
 
     /* private methods */
-    private CertResponse processRequest(ContentSigner sigGen, CertReqMsg certReqMsg) throws ProcessRequestException, NoSuchAlgorithmException, IOException, ProfileException {
+    private ProcessCertificationResult processRequest(ContentSigner sigGen, CertTemplate certTemplate, int profile) throws ProcessRequestException, NoSuchAlgorithmException, IOException, ProfileException, NoSuchProviderException, CertificateException {
     	
     	Result.Decisions overallResult = Result.Decisions.VALID;
 
-        CertTemplate tempCertTemplate = certReqMsg.getCertReq().getCertTemplate();
+        CertTemplate tempCertTemplate = certTemplate;
 
-        Profile certificateProfile = certificationProfiles.get(certReqMsg.getCertReq().getCertReqId().getPositiveValue().intValue());
+        Profile certificateProfile = certificationProfiles.get(profile);
         if (certificateProfile == null) {
-        	logger.error("Unknown profile according to certificate Id [" + 
-        		certReqMsg.getCertReq().getCertReqId().getPositiveValue().toString() + "]");        	
+        	logger.error("Unknown profile according to certificate Id [" + profile + "]");        	
             throw new ProcessRequestException("Unknown profile according to certificate Id");
         }
         
@@ -102,19 +107,18 @@ public class ProcessCertification {
         Result resultNBefore = certificateProfile.validateCertificateNBefore(tempCertTemplate);
         if (resultNBefore.getDecision() == Result.Decisions.INVALID) {
         	logger.error((String) resultNBefore.getValue());
-        	throw new ProcessRequestException((String) resultNBefore.getValue());
         }
-        overallResult = overallResult == Result.Decisions.OVERRULED ? Result.Decisions.OVERRULED 
-        		: resultNBefore.getDecision();
-        
+        overallResult = (overallResult == Result.Decisions.VALID) ? resultNBefore.getDecision() : overallResult;
+        Date nBefore = (Date)resultNBefore.getValue();
+        		
         // NAfter
         Result resultNAfter = certificateProfile.validateCertificateNAfter(tempCertTemplate);
         if (resultNAfter.getDecision() == Result.Decisions.INVALID) {
         	logger.error((String) resultNAfter.getValue());
-        	throw new ProcessRequestException((String) resultNAfter.getValue());
         }
-        overallResult = overallResult == Result.Decisions.OVERRULED ? Result.Decisions.OVERRULED 
-        		: resultNAftet.getDecision();
+        overallResult = (overallResult == Result.Decisions.VALID) ? resultNBefore.getDecision() : overallResult;
+        Date nAfter = (Date)resultNAfter.getValue();
+        
         OptionalValidity optionalValidity = new OptionalValidity(
         		new Time((Date)resultNBefore.getValue()), 
         		new Time((Date)resultNAfter.getValue()));
@@ -124,60 +128,73 @@ public class ProcessCertification {
         tempCertTemplate = certTemplateBuilder.build();
 
         // Only verification of time period no overrule results 
+        // TODO refactor the certificateProfile.validateCertificateValidity() check
         Result resultValidity = certificateProfile.validateCertificateValidity(tempCertTemplate);
-        if (resultNAfter.getDecision() == Result.Decisions.INVALID) {
+        if (resultValidity.getDecision() == Result.Decisions.INVALID) {
         	logger.error((String) resultValidity.getValue());
-        	throw new ProcessRequestException((String) resultValidity.getValue());
         }
-        overallResult = overallResult == Result.Decisions.OVERRULED ? Result.Decisions.OVERRULED 
-        		: resultValidity.getDecision();
+        overallResult = (overallResult == Result.Decisions.VALID) ? resultNBefore.getDecision() : overallResult;
 
         //Public Key
         Result resultKeyLength = certificateProfile.validateCertificateKeyLength(tempCertTemplate);
         if (resultKeyLength.getDecision() == Result.Decisions.INVALID) {
         	logger.error((String) resultKeyLength.getValue());
-        	throw new ProcessRequestException((String) resultKeyLength.getValue());
         }
-        overallResult = overallResult == Result.Decisions.OVERRULED ? Result.Decisions.OVERRULED 
-        		: resultKeyLength.getDecision();
-        certTemplateBuilder.setPublicKey(tempCertTemplate.getPublicKey());
-        
+        overallResult = (overallResult == Result.Decisions.VALID) ? resultNBefore.getDecision() : overallResult;
+
+        KeyPair keyPair = null;
+        if (tempCertTemplate.getPublicKey() == null) {
+        	keyPair = pkiKeyStore.generateKeyPair(((Integer)resultKeyLength.getValue()).intValue(),
+        			"RSA");
+            certTemplateBuilder.setPublicKey(new SubjectPublicKeyInfo(ASN1Sequence.getInstance(
+            		keyPair.getPublic().getEncoded())));
+        }
+        else {
+            certTemplateBuilder.setPublicKey(tempCertTemplate.getPublicKey());
+        }
+
         // Add the extensions to the certificate
-        CertTemplate certTemplate = certTemplateBuilder.build();
-        List<Result> results = certificateProfile.validateCertificateExtensions(certTemplate);
-        List<Extension> extensions = new ArrayList<Extension>();
-        Result.Decisions validated;
+        tempCertTemplate = certTemplateBuilder.build();
+        List<Result> results = certificateProfile.validateCertificateExtensions(tempCertTemplate);
+        
+        X509v3CertificateBuilder x509v3CertificateBuilder = new X509v3CertificateBuilder(
+        		tempCertTemplate.getSubject(),
+        		BigInteger.valueOf(1),
+        		nBefore,
+        		nAfter,
+        		tempCertTemplate.getIssuer(),
+        		tempCertTemplate.getPublicKey());
+
         for (Result result : results) {
         	if (result.getDecision() == Result.Decisions.INVALID) {
-        		validated = Result.Decisions.INVALID;
-        		break;
+            	logger.error((String) resultNAfter.getValue());
         	}
-        	extensions.add((Extension)result.getValue());
+            overallResult = (overallResult == Result.Decisions.VALID) ? resultNBefore.getDecision() : overallResult;
+            
+        	Extension extension = (Extension) result.getValue();
+        	x509v3CertificateBuilder.addExtension(extension.getExtnId(), 
+        			extension.isCritical(), 
+        			extension.getExtnValue());
         }
-        Extension[] extensionsArray = new Extension[extensions.size()]; 
-    	certTemplateBuilder.setExtensions(new Extensions(extensions.toArray(extensionsArray)));
-
-        X509v3CertificateBuilder x509v3CertificateBuilder = new X509v3CertificateBuilder(
-                // Issuer Name
-                JcaX500NameUtil.getSubject(pkiKeyStore.getCACertificate()),
-                // Serial number
-                BigInteger.valueOf(pkiKeyStore.getSecureRandom().nextLong()),
-                // Not Before
-                new Date(System.currentTimeMillis() - 500L * 60 * 60 * 24 * 30),
-                // Not After
-                new Date(System.currentTimeMillis() + (500L * 60 * 60 * 24 * 30)),
-                // subjects name - the same as we are self signed.
-                certReqMsg.getCertReq().getCertTemplate().getSubject(),
-                certReqMsg.getCertReq().getCertTemplate().getPublicKey());
+    	
         
         X509CertificateHolder x509CertificateHolder = x509v3CertificateBuilder.build(sigGen);
 
-        CertResponse certResponse = new CertResponse(certReqMsg.getCertReq().getCertReqId(),
-                new PKIStatusInfo(PKIStatus.granted),
-                new CertifiedKeyPair(new CertOrEncCert(new CMPCertificate(x509CertificateHolder.toASN1Structure()))),
-                null);
+    	PKIStatus pkiStatus = PKIStatus.rejection;
+        if (overallResult == Result.Decisions.VALID) {
+        	pkiStatus = PKIStatus.granted;
+        }
+        else if (overallResult == Result.Decisions.OVERRULED) {
+        	pkiStatus = PKIStatus.grantedWithMods;
+        }
+        else {
+        	pkiStatus = PKIStatus.rejection;
+        }
 
-        return certResponse;
+        JcaX509CertificateConverter jcaX509CertificateConverter = new JcaX509CertificateConverter();
+        
+        return new ProcessCertificationResult(pkiStatus, 
+        		jcaX509CertificateConverter.getCertificate(x509CertificateHolder), keyPair);
     }
 
     /* public methods */
@@ -185,20 +202,20 @@ public class ProcessCertification {
         this.pkiKeyStore = pkiKeyStore;
     }
 
-    public PKIBody getResponse(PKIBody pkiBody) throws OperatorCreationException, ProcessRequestException, NoSuchAlgorithmException, IOException, ProfileException {
-
-        CertReqMsg[] certReqMsgs = CertReqMessages.getInstance(pkiBody.getContent()).toCertReqMsgArray();
-
-        // Signer of the certificate
-        ContentSigner sigGen = new JcaContentSignerBuilder("SHA256WithRSAEncryption")
-                .setProvider(pkiKeyStore.getProvider())
-                .build(pkiKeyStore.getCAPrivateKey());
-
-        List<CertResponse> certResponses = new ArrayList<CertResponse>();
-        for (CertReqMsg certRepMsg: certReqMsgs) {
-            certResponses.add(processRequest(sigGen, certRepMsg));
-        }
-
-        return new PKIBody(PKIBody.TYPE_CERT_REP, new CertRepMessage(null, certResponses.toArray(new CertResponse[certResponses.size()])));
-    }
+//    public PKIBody getResponse(PKIBody pkiBody) throws OperatorCreationException, ProcessRequestException, NoSuchAlgorithmException, IOException, ProfileException, NoSuchProviderException {
+//
+//        CertReqMsg[] certReqMsgs = CertReqMessages.getInstance(pkiBody.getContent()).toCertReqMsgArray();
+//
+//        // Signer of the certificate
+//        ContentSigner sigGen = new JcaContentSignerBuilder("SHA256WithRSAEncryption")
+//                .setProvider(pkiKeyStore.getProvider())
+//                .build(pkiKeyStore.getCAPrivateKey());
+//
+//        List<CertResponse> certResponses = new ArrayList<CertResponse>();
+//        for (CertReqMsg certRepMsg: certReqMsgs) {
+//            certResponses.add(processRequest(sigGen, certRepMsg));
+//        }
+//
+//        return new PKIBody(PKIBody.TYPE_CERT_REP, new CertRepMessage(null, certResponses.toArray(new CertResponse[certResponses.size()])));
+//    }
 }
