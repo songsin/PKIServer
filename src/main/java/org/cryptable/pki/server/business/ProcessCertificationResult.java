@@ -1,21 +1,21 @@
 package org.cryptable.pki.server.business;
 
 import java.security.KeyPair;
-
 import java.security.cert.X509Certificate;
 
 import org.bouncycastle.asn1.cmp.PKIStatus;
+import org.bouncycastle.cert.X509CertificateHolder;
 
 public class ProcessCertificationResult {
 	PKIStatus pkiStatus;
 	
-	X509Certificate x509Certificate;
+	X509CertificateHolder x509CertificateHolder;
 	
 	KeyPair keyPair;
 
-	public ProcessCertificationResult(PKIStatus pkiStatus, X509Certificate x509Certificate, KeyPair keyPair) {
+	public ProcessCertificationResult(PKIStatus pkiStatus, X509CertificateHolder x509CertificateHolder, KeyPair keyPair) {
 		this.pkiStatus = pkiStatus;
-		this.x509Certificate = x509Certificate;
+		this.x509CertificateHolder = x509CertificateHolder;
 		this.keyPair = keyPair;
 	}
 	
@@ -27,12 +27,12 @@ public class ProcessCertificationResult {
 		this.pkiStatus = pkiStatus;
 	}
 
-	public X509Certificate getX509Certificate() {
-		return x509Certificate;
+	public X509CertificateHolder getX509CertificateHolder() {
+		return x509CertificateHolder;
 	}
 
-	public void setX509Certificate(X509Certificate x509Certificate) {
-		this.x509Certificate = x509Certificate;
+	public void setX509CertificateHolder(X509CertificateHolder x509CertificateHolder) {
+		this.x509CertificateHolder = x509CertificateHolder;
 	}
 
 	public KeyPair getKeyPair() {
