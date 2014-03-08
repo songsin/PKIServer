@@ -1,0 +1,224 @@
+<?xml version="1.0"?>
+<Profiles>
+  <Profile ID="1" Name="Certificate policies Valid">
+    <Certificate>
+      <Validity>
+        <Minimum_Duration>365</Minimum_Duration>
+        <Maximum_Duration>731</Maximum_Duration>
+        <Not_Before Overrule="Yes">20130101000000</Not_Before>
+        <Not_After Overrule="Yes">20171231000000</Not_After>
+      </Validity>
+      <Key_Length/>
+      <Algorithm>SHA-1</Algorithm>
+      <Keys>Store Private Keys</Keys>
+      <Extensions>
+        <Key_Usage>
+          <Signature>No Overrule</Signature>
+          <Non_Repudiation>No Overrule</Non_Repudiation>
+          <Key_Encipherment>No Overrule</Key_Encipherment>
+          <Data_Encipherment>No Overrule</Data_Encipherment>
+          <Key_Agreement>No Overrule</Key_Agreement>
+          <CRL_Signature>No Overrule</CRL_Signature>
+          <Encipherment_Only>No Overrule</Encipherment_Only>
+          <Decipherment_Only>No Overrule</Decipherment_Only>
+          <Key_Certificate_Signature>No Overrule</Key_Certificate_Signature>
+        </Key_Usage>
+        <Certificate_Policies Critical="Yes">
+          <Certificate_Policy OID="1.2.3.4.1.2.3.4.1">
+            <Qualifier ID="1.3.6.1.5.5.7.2.1">
+              <URI>https://www.google.be</URI>
+            </Qualifier>
+            <Qualifier ID="1.3.6.1.5.5.7.2.2">
+              <Organisation>Cryptable</Organisation>
+              <Notice_Numbers>11,23,44</Notice_Numbers>
+              <Explicit_Text>This is a test certificate</Explicit_Text>
+            </Qualifier>
+          </Certificate_Policy>
+          <Certificate_Policy OID="2.3.4.2.4.5.1">
+            <Qualifier ID="1.3.6.1.5.5.7.2.1">
+              <URI>http://www.cryptable.org/cps.pdf</URI>
+            </Qualifier>
+          </Certificate_Policy>
+        </Certificate_Policies>
+        <Extended_Key_Usage>
+          <Server_Authentication>No Overrule</Server_Authentication>
+          <Client_Authentication>No Overrule</Client_Authentication>
+          <Code_Signing>No Overrule</Code_Signing>
+          <E_Mail_Protection>No Overrule</E_Mail_Protection>
+          <Time_Stamping>No Overrule</Time_Stamping>
+          <IPSec_End_System>No Overrule</IPSec_End_System>
+          <IPSec_Tunnel>No Overrule</IPSec_Tunnel>
+          <IPSec_User>No Overrule</IPSec_User>
+          <IKE_Intermediate>No Overrule</IKE_Intermediate>
+          <OCSP_Signing>No Overrule</OCSP_Signing>
+          <Smartcard_Logon>No Overrule</Smartcard_Logon>
+          <Key_Recovery_Agent>No Overrule</Key_Recovery_Agent>
+          <Drive_Encryption>No Overrule</Drive_Encryption>
+          <Drive_Recovery>No Overrule</Drive_Recovery>
+        </Extended_Key_Usage>
+      </Extensions>
+    </Certificate>
+    <PIN_Code>
+      <User_PIN/>
+      <Unblocking_PIN/>
+      <Master_PIN/>
+    </PIN_Code>
+    <CRL>
+      <Validity>
+        <Year>0</Year>
+        <Month>2</Month>
+        <Day>0</Day>
+        <Hour>0</Hour>
+        <Minute>0</Minute>
+        <Second>0</Second>
+      </Validity>
+      <Expiry_Date/>
+      <Update_Period/>
+      <Publication/>
+      <Extensions/>
+    </CRL>
+    <Publication/>
+    <Roles/>
+    <Key_Origin/>
+  </Profile>
+  <Profile ID="2" Name="Certificate policies overruled">
+    <Certificate>
+      <Validity>
+        <Minimum_Duration>365</Minimum_Duration>
+        <Maximum_Duration>731</Maximum_Duration>
+        <Not_Before Overrule="Yes">20130101000000</Not_Before>
+        <Not_After Overrule="Yes">20171231000000</Not_After>
+      </Validity>
+      <Key_Length/>
+      <Algorithm>SHA-1</Algorithm>
+      <Keys>Store Private Keys</Keys>
+      <Extensions>
+        <Key_Usage>
+          <Signature>No Overrule</Signature>
+          <Non_Repudiation>No Overrule</Non_Repudiation>
+          <Key_Encipherment>No Overrule</Key_Encipherment>
+          <Data_Encipherment>No Overrule</Data_Encipherment>
+          <Key_Agreement>No Overrule</Key_Agreement>
+          <CRL_Signature>No Overrule</CRL_Signature>
+          <Encipherment_Only>No Overrule</Encipherment_Only>
+          <Decipherment_Only>No Overrule</Decipherment_Only>
+          <Key_Certificate_Signature>No Overrule</Key_Certificate_Signature>
+        </Key_Usage>
+        <Certificate_Policies Critical="No">
+          <Certificate_Policy OID="1.2.3.4.1.2.3.4.1">
+            <Qualifier ID="1.3.6.1.5.5.7.2.1">
+              <URI>https://www.google.be</URI>
+            </Qualifier>
+            <Qualifier ID="1.3.6.1.5.5.7.2.2">
+              <Organisation>Cryptable</Organisation>
+              <Notice_Numbers>11,23,44</Notice_Numbers>
+              <Explicit_Text>This is a test certificate</Explicit_Text>
+            </Qualifier>
+          </Certificate_Policy>
+        </Certificate_Policies>
+        <Extended_Key_Usage>
+          <Server_Authentication>No Overrule</Server_Authentication>
+          <Client_Authentication>No Overrule</Client_Authentication>
+          <Code_Signing>No Overrule</Code_Signing>
+          <E_Mail_Protection>No Overrule</E_Mail_Protection>
+          <Time_Stamping>No Overrule</Time_Stamping>
+          <IPSec_End_System>No Overrule</IPSec_End_System>
+          <IPSec_Tunnel>No Overrule</IPSec_Tunnel>
+          <IPSec_User>No Overrule</IPSec_User>
+          <IKE_Intermediate>No Overrule</IKE_Intermediate>
+          <OCSP_Signing>No Overrule</OCSP_Signing>
+          <Smartcard_Logon>No Overrule</Smartcard_Logon>
+          <Key_Recovery_Agent>No Overrule</Key_Recovery_Agent>
+          <Drive_Encryption>No Overrule</Drive_Encryption>
+          <Drive_Recovery>No Overrule</Drive_Recovery>
+        </Extended_Key_Usage>
+      </Extensions>
+    </Certificate>
+    <PIN_Code>
+      <User_PIN/>
+      <Unblocking_PIN/>
+      <Master_PIN/>
+    </PIN_Code>
+    <CRL>
+      <Validity>
+        <Year>0</Year>
+        <Month>2</Month>
+        <Day>0</Day>
+        <Hour>0</Hour>
+        <Minute>0</Minute>
+        <Second>0</Second>
+      </Validity>
+      <Expiry_Date/>
+      <Update_Period/>
+      <Publication/>
+      <Extensions/>
+    </CRL>
+    <Publication/>
+    <Roles/>
+    <Key_Origin/>
+  </Profile>
+  <Profile ID="3" Name="Certificate policies empty">
+    <Certificate>
+      <Validity>
+        <Minimum_Duration>365</Minimum_Duration>
+        <Maximum_Duration>731</Maximum_Duration>
+        <Not_Before Overrule="Yes">20130101000000</Not_Before>
+        <Not_After Overrule="Yes">20171231000000</Not_After>
+      </Validity>
+      <Key_Length/>
+      <Algorithm>SHA-1</Algorithm>
+      <Keys>Store Private Keys</Keys>
+      <Extensions>
+        <Key_Usage>
+          <Signature>No Overrule</Signature>
+          <Non_Repudiation>No Overrule</Non_Repudiation>
+          <Key_Encipherment>No Overrule</Key_Encipherment>
+          <Data_Encipherment>No Overrule</Data_Encipherment>
+          <Key_Agreement>No Overrule</Key_Agreement>
+          <CRL_Signature>No Overrule</CRL_Signature>
+          <Encipherment_Only>No Overrule</Encipherment_Only>
+          <Decipherment_Only>No Overrule</Decipherment_Only>
+          <Key_Certificate_Signature>No Overrule</Key_Certificate_Signature>
+        </Key_Usage>
+        <Extended_Key_Usage>
+          <Server_Authentication>No Overrule</Server_Authentication>
+          <Client_Authentication>No Overrule</Client_Authentication>
+          <Code_Signing>No Overrule</Code_Signing>
+          <E_Mail_Protection>No Overrule</E_Mail_Protection>
+          <Time_Stamping>No Overrule</Time_Stamping>
+          <IPSec_End_System>No Overrule</IPSec_End_System>
+          <IPSec_Tunnel>No Overrule</IPSec_Tunnel>
+          <IPSec_User>No Overrule</IPSec_User>
+          <IKE_Intermediate>No Overrule</IKE_Intermediate>
+          <OCSP_Signing>No Overrule</OCSP_Signing>
+          <Smartcard_Logon>No Overrule</Smartcard_Logon>
+          <Key_Recovery_Agent>No Overrule</Key_Recovery_Agent>
+          <Drive_Encryption>No Overrule</Drive_Encryption>
+          <Drive_Recovery>No Overrule</Drive_Recovery>
+        </Extended_Key_Usage>
+      </Extensions>
+    </Certificate>
+    <PIN_Code>
+      <User_PIN/>
+      <Unblocking_PIN/>
+      <Master_PIN/>
+    </PIN_Code>
+    <CRL>
+      <Validity>
+        <Year>0</Year>
+        <Month>2</Month>
+        <Day>0</Day>
+        <Hour>0</Hour>
+        <Minute>0</Minute>
+        <Second>0</Second>
+      </Validity>
+      <Expiry_Date/>
+      <Update_Period/>
+      <Publication/>
+      <Extensions/>
+    </CRL>
+    <Publication/>
+    <Roles/>
+    <Key_Origin/>
+  </Profile>
+</Profiles>

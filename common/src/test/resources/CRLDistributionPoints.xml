@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<Profiles>
+  <Profile ID="1" Name="CRL Distribution Point">
+    <Certificate>
+      <Validity/>
+      <Key_Length/>
+      <Algorithm>SHA-1</Algorithm>
+      <Keys>Store Private Keys</Keys>
+      <Extensions>
+        <Extended_Key_Usage>
+          <Server_Authentication>No Overrule</Server_Authentication>
+          <Client_Authentication>No Overrule</Client_Authentication>
+          <Code_Signing>No Overrule</Code_Signing>
+          <E_Mail_Protection>No Overrule</E_Mail_Protection>
+          <Time_Stamping>No Overrule</Time_Stamping>
+          <IPSec_End_System>No Overrule</IPSec_End_System>
+          <IPSec_Tunnel>No Overrule</IPSec_Tunnel>
+          <IPSec_User>No Overrule</IPSec_User>
+          <IKE_Intermediate>No Overrule</IKE_Intermediate>
+          <OCSP_Signing>No Overrule</OCSP_Signing>
+          <Smartcard_Logon>No Overrule</Smartcard_Logon>
+          <Key_Recovery_Agent>No Overrule</Key_Recovery_Agent>
+          <Drive_Encryption>No Overrule</Drive_Encryption>
+          <Drive_Recovery>No Overrule</Drive_Recovery>
+        </Extended_Key_Usage>
+        <CRL_Distribution_Points>
+          <Distribution_Point Name="Distribution 1">
+            <E_Mail>ca@cryptable.org</E_Mail>
+            <IP_Address>10.2.3.4</IP_Address>
+            <Domain_Name>www.cryptable.org</Domain_Name>
+            <DName>cn=ca, o=cryptable</DName>
+            <URL>http://www.google.be</URL>
+            <Add_Issuer_Name/>
+            <Reason_Codes>
+              <Key_Compromise/>
+              <CA_Compromise/>
+              <Affiliation_Changed/>
+              <Superseded/>
+              <Cessation_Of_Operation/>
+              <Certificate_On_Hold/>
+            </Reason_Codes>
+          </Distribution_Point>
+        </CRL_Distribution_Points>
+      </Extensions>
+    </Certificate>
+    <PIN_Code>
+      <User_PIN/>
+      <Unblocking_PIN/>
+      <Master_PIN/>
+    </PIN_Code>
+    <CRL>
+      <Validity>
+        <Year>0</Year>
+        <Month>2</Month>
+        <Day>0</Day>
+        <Hour>0</Hour>
+        <Minute>0</Minute>
+        <Second>0</Second>
+      </Validity>
+      <Expiry_Date/>
+      <Update_Period/>
+      <Publication/>
+      <Extensions/>
+    </CRL>
+    <Publication/>
+    <Roles/>
+    <Key_Origin/>
+  </Profile>
+  <Profile ID="2" Name="2 CRL distribution points">
+    <Certificate>
+      <Validity/>
+      <Key_Length/>
+      <Algorithm>SHA-1</Algorithm>
+      <Keys>Store Private Keys</Keys>
+      <Extensions>
+        <Extended_Key_Usage>
+          <Server_Authentication>No Overrule</Server_Authentication>
+          <Client_Authentication>No Overrule</Client_Authentication>
+          <Code_Signing>No Overrule</Code_Signing>
+          <E_Mail_Protection>No Overrule</E_Mail_Protection>
+          <Time_Stamping>No Overrule</Time_Stamping>
+          <IPSec_End_System>No Overrule</IPSec_End_System>
+          <IPSec_Tunnel>No Overrule</IPSec_Tunnel>
+          <IPSec_User>No Overrule</IPSec_User>
+          <IKE_Intermediate>No Overrule</IKE_Intermediate>
+          <OCSP_Signing>No Overrule</OCSP_Signing>
+          <Smartcard_Logon>No Overrule</Smartcard_Logon>
+          <Key_Recovery_Agent>No Overrule</Key_Recovery_Agent>
+          <Drive_Encryption>No Overrule</Drive_Encryption>
+          <Drive_Recovery>No Overrule</Drive_Recovery>
+        </Extended_Key_Usage>
+        <CRL_Distribution_Points>
+          <Distribution_Point Name="Distribution 1">
+            <E_Mail>ca@cryptable.org</E_Mail>
+            <IP_Address>10.2.3.4</IP_Address>
+            <Domain_Name>www.cryptable.org</Domain_Name>
+            <DName>cn=ca, o=cryptable</DName>
+            <URL>http://www.google.be</URL>
+            <Add_Issuer_Name/>
+            <Reason_Codes>
+              <Key_Compromise/>
+              <CA_Compromise/>
+              <Affiliation_Changed/>
+              <Superseded/>
+              <Cessation_Of_Operation/>
+              <Certificate_On_Hold/>
+            </Reason_Codes>
+          </Distribution_Point>
+          <Distribution_Point Name="DistributionPoint 2">
+            <Relative_DName>/O=Cryptable</Relative_DName>
+            <Reason_Codes>
+              <Key_Compromise/>
+              <Affiliation_Changed/>
+              <Certificate_On_Hold/>
+            </Reason_Codes>
+          </Distribution_Point>
+        </CRL_Distribution_Points>
+      </Extensions>
+    </Certificate>
+    <PIN_Code>
+      <User_PIN/>
+      <Unblocking_PIN/>
+      <Master_PIN/>
+    </PIN_Code>
+    <CRL>
+      <Validity>
+        <Year>0</Year>
+        <Month>2</Month>
+        <Day>0</Day>
+        <Hour>0</Hour>
+        <Minute>0</Minute>
+        <Second>0</Second>
+      </Validity>
+      <Expiry_Date/>
+      <Update_Period/>
+      <Publication/>
+      <Extensions/>
+    </CRL>
+    <Publication/>
+    <Roles/>
+    <Key_Origin/>
+  </Profile>
+</Profiles>
