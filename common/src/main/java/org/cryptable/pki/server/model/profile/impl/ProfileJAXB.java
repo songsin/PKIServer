@@ -2,10 +2,12 @@ package org.cryptable.pki.server.model.profile.impl;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.crmf.CertTemplate;
+import org.bouncycastle.asn1.crmf.OptionalValidity;
 import org.bouncycastle.asn1.microsoft.MicrosoftObjectIdentifiers;
 import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
+import org.bouncycastle.asn1.x509.Time;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.cryptable.pki.server.model.profile.ExtensionTemplate;
@@ -70,8 +72,7 @@ public class ProfileJAXB implements Profile {
             extensionTemplates.put(Extension.authorityInfoAccess, new AuthorityInfoAccessJAXB(jaxbProfile.getCertificateProfile().getExtensions().getAuthorityInfoAccess()));
     }
 
-    @Override
-    public Result validateCertificateNBefore(CertTemplate certTemplate) throws ProfileException {
+    private Result validateCertificateNBefore(CertTemplate certTemplate) throws ProfileException {
 
         DateTime nBefore = null;
         Result result = new Result(Result.Decisions.INVALID, null);
@@ -86,8 +87,9 @@ public class ProfileJAXB implements Profile {
             JAXBDateWithOverRule date = jaxbProfile.getCertificateProfile().getCertificateValidityProfile().getNotBefore();
 
             if (date == null ||
-               ((nBefore != null) && (nBefore.getMillis() >= date.getDate().getMillis())) &&
-               !date.getOverrule()) {
+                ((nBefore != null) && 
+                 (nBefore.getMillis() >= date.getDate().getMillis()) &&
+                 !date.getOverrule())) {
                 logger.debug("Check Not Before [null|null|" + nBefore.toString() + "]");
                 result.setDecision(Result.Decisions.VALID);
                 result.setValue(nBefore);
@@ -100,7 +102,7 @@ public class ProfileJAXB implements Profile {
             else {
                 logger.debug("Check Not Before [" + date.getDate().toString() + "|" + date.getOverrule().toString() + "|" + nBefore.toString() + "]");
                 result.setDecision(Result.Decisions.INVALID);
-                result.setValue(String.valueOf("Invalid Not After [" + date.toString() + ":" + nBefore.toString() + "]"));
+                result.setValue(String.valueOf("Invalid Not Before [" + date.getDate().toString() + ":" + nBefore.toString() + "]"));
             }
         }
         else {
@@ -111,8 +113,7 @@ public class ProfileJAXB implements Profile {
         return result;
     }
 
-    @Override
-    public Result validateCertificateNAfter(CertTemplate certTemplate) throws ProfileException {
+    private Result validateCertificateNAfter(CertTemplate certTemplate) throws ProfileException {
 
         DateTime nAfter = null;
         Result result = new Result(Result.Decisions.INVALID, null);
@@ -127,8 +128,9 @@ public class ProfileJAXB implements Profile {
             JAXBDateWithOverRule date = jaxbProfile.getCertificateProfile().getCertificateValidityProfile().getNotAfter();
 
             if (date == null ||
-               ((nAfter != null) && (nAfter.getMillis() <= date.getDate().getMillis()))
-               && !date.getOverrule()) {
+                ((nAfter != null) && 
+                 (nAfter.getMillis() <= date.getDate().getMillis())
+                 && !date.getOverrule())) {
                 logger.debug("Check Not After [null|null|" + nAfter.toString() + "]");
                 result.setDecision(Result.Decisions.VALID);
                 result.setValue(nAfter);
@@ -141,7 +143,7 @@ public class ProfileJAXB implements Profile {
             else {
                 logger.debug("Check Not After [" + date.getDate().toString() + "|" + date.getOverrule().toString() + "|" + nAfter.toString() + "]");
                 result.setDecision(Result.Decisions.INVALID);
-                result.setValue(String.valueOf("Invalid Not Before [" + date.toString() + ":" + nAfter.toString() + "]"));
+                result.setValue(String.valueOf("Invalid Not After [" + date.getDate().toString() + ":" + nAfter.toString() + "]"));
             }
 
         }
@@ -158,49 +160,50 @@ public class ProfileJAXB implements Profile {
 
         DateTime nBefore = null;
         DateTime nAfter = null;
-        Result result = new Result(Result.Decisions.INVALID, null);
+        Result result = new Result(Result.Decisions.INVALID, String.valueOf("Invalid validity"));
 
-        if ((certTemplate.getValidity() != null) &&
-            (certTemplate.getValidity().getNotBefore() != null) &&
-            (certTemplate.getValidity().getNotAfter() != null)) {
-            nBefore = new DateTime(certTemplate.getValidity().getNotBefore().getDate(), DateTimeZone.UTC);
-            nAfter = new DateTime(certTemplate.getValidity().getNotAfter().getDate(), DateTimeZone.UTC);
-        }
+        Result resultNBefore = validateCertificateNBefore(certTemplate); 
+        if (resultNBefore.getDecision() != Result.Decisions.INVALID) {
+        	nBefore = (DateTime)resultNBefore.getValue();
 
-        if ((jaxbProfile.getCertificateProfile() != null) &&
-            (jaxbProfile.getCertificateProfile().getCertificateValidityProfile() != null))  {
-            JAXBDateWithOverRule dateNBefore = jaxbProfile.getCertificateProfile().getCertificateValidityProfile().getNotBefore();
-            JAXBDateWithOverRule dateNAfter = jaxbProfile.getCertificateProfile().getCertificateValidityProfile().getNotAfter();
+        	Result resultNAfter = validateCertificateNAfter(certTemplate);
+        	if (resultNAfter.getDecision() != Result.Decisions.INVALID) {
+        		nAfter = (DateTime)resultNAfter.getValue();
 
-            if (dateNBefore != null && dateNAfter != null &&
-                dateNBefore.getOverrule() && dateNAfter.getOverrule()) {
-                logger.debug("Check Validity overruled!");
+        		if ((jaxbProfile.getCertificateProfile() != null) &&
+			        (jaxbProfile.getCertificateProfile().getCertificateValidityProfile() != null))  {
+        			
+        			Integer minDays = jaxbProfile.getCertificateProfile().getCertificateValidityProfile().getMinimumDuration();
+        			Integer maxDays = jaxbProfile.getCertificateProfile().getCertificateValidityProfile().getMaximumDuration();
+        			int numDays = (new Duration(nBefore, nAfter)).toStandardDays().getDays();
 
-                result.setDecision(Result.Decisions.OVERRULED);
-                result.setValue(null);
-            }
-            else {
-                Integer minDays = jaxbProfile.getCertificateProfile().getCertificateValidityProfile().getMinimumDuration();
-                Integer maxDays = jaxbProfile.getCertificateProfile().getCertificateValidityProfile().getMaximumDuration();
-                int numDays = (new Duration(nBefore, nAfter)).toStandardDays().getDays();
-
-                if (minDays != null && numDays < minDays) {
-                    result.setDecision(Result.Decisions.INVALID);
-                    result.setValue(String.valueOf("Invalid minimum duration [" + String.valueOf(numDays) + "]"));
-                }
-                else if (maxDays != null && numDays > maxDays) {
-                    result.setDecision(Result.Decisions.INVALID);
-                    result.setValue(String.valueOf("Invalid maximum duration [" + String.valueOf(numDays) + "]"));
-                }
-                else {
-                    result.setDecision(Result.Decisions.VALID);
-                    result.setValue(null);
-                }
-            }
-        }
-        else {
-            throw new ProfileException("Corrupt profile in validity section: [" + String.valueOf(jaxbProfile.getId()) + ":"
-                + jaxbProfile.getName() + "]");
+	                if (minDays != null && numDays < minDays) {
+	                    result.setDecision(Result.Decisions.INVALID);
+	                    result.setValue(String.valueOf("Invalid minimum duration [" + String.valueOf(numDays) + "]"));
+	                }
+	                else if (maxDays != null && numDays > maxDays) {
+	                    result.setDecision(Result.Decisions.INVALID);
+	                    result.setValue(String.valueOf("Invalid maximum duration [" + String.valueOf(numDays) + "]"));
+	                }
+	                else {
+	                	result = new Result(resultNBefore.getDecision() == Result.Decisions.OVERRULED ? Result.Decisions.OVERRULED : resultNAfter.getDecision(),
+	                			new OptionalValidity(
+	    	                   		new Time((Date)nBefore.toDate()), 
+	    	                   		new Time((Date)nAfter.toDate())));	                	
+	                }
+        		}
+        		else {
+        			result = new Result(resultNBefore.getDecision() == Result.Decisions.OVERRULED ? Result.Decisions.OVERRULED : resultNAfter.getDecision(),
+        					new OptionalValidity(
+    	                   		new Time((Date)nBefore.toDate()), 
+    	                   		new Time((Date)nAfter.toDate())));
+        		}
+        	}
+        	else {
+        		result = resultNAfter;
+        	}
+        } else {
+    		result = resultNBefore;        	
         }
 
         return result;

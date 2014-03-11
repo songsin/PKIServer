@@ -16,8 +16,11 @@ import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBException;
+
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -35,6 +38,8 @@ import static org.junit.Assert.*;
  * Hour: 00:27
  */
 public class ProfilesValidityTest {
+
+    final Logger logger = LoggerFactory.getLogger(ProfilesValidityTest.class);
 
     static private Profiles profiles = null;
     private CertTemplateBuilder certTemplateBuilder = new CertTemplateBuilder();
@@ -68,12 +73,8 @@ public class ProfilesValidityTest {
             .setValidity(new OptionalValidity(new Time(nBefore.toDate()), new Time(nAfter.toDate())))
             .build();
 
-        Result result1 = profile.validateCertificateNBefore(certTemplate);
-        Result result2 = profile.validateCertificateNAfter(certTemplate);
         Result result3 = profile.validateCertificateValidity(certTemplate);
 
-        assertEquals(Result.Decisions.VALID, result1.getDecision());
-        assertEquals(Result.Decisions.VALID, result2.getDecision());
         assertEquals(Result.Decisions.VALID, result3.getDecision());
 
     }
@@ -92,14 +93,10 @@ public class ProfilesValidityTest {
             .setValidity(new OptionalValidity(new Time(nBefore.toDate()), new Time(nAfter.toDate())))
             .build();
 
-        Result result1 = profile.validateCertificateNBefore(certTemplate);
-        Result result2 = profile.validateCertificateNAfter(certTemplate);
         Result result3 = profile.validateCertificateValidity(certTemplate);
 
-        assertEquals(Result.Decisions.INVALID, result1.getDecision());
-        assertEquals(Result.Decisions.VALID, result2.getDecision());
-        assertEquals(Result.Decisions.VALID, result3.getDecision());
-
+        assertEquals(Result.Decisions.INVALID, result3.getDecision());
+        logger.debug((String)result3.getValue());
     }
 
     /**
@@ -116,13 +113,10 @@ public class ProfilesValidityTest {
             .setValidity(new OptionalValidity(new Time(nBefore.toDate()), new Time(nAfter.toDate())))
             .build();
 
-        Result result1 = profile.validateCertificateNBefore(certTemplate);
-        Result result2 = profile.validateCertificateNAfter(certTemplate);
         Result result3 = profile.validateCertificateValidity(certTemplate);
 
-        assertEquals(Result.Decisions.VALID, result1.getDecision());
-        assertEquals(Result.Decisions.INVALID, result2.getDecision());
-        assertEquals(Result.Decisions.VALID, result3.getDecision());
+        assertEquals(Result.Decisions.INVALID, result3.getDecision());
+        logger.debug((String)result3.getValue());
 
     }
 
@@ -140,12 +134,9 @@ public class ProfilesValidityTest {
             .setValidity(new OptionalValidity(new Time(nBefore.toDate()), new Time(nAfter.toDate())))
             .build();
 
-        Result result1 = profile.validateCertificateNBefore(certTemplate);
-        Result result2 = profile.validateCertificateNAfter(certTemplate);
         Result result3 = profile.validateCertificateValidity(certTemplate);
 
-        assertEquals(Result.Decisions.VALID, result1.getDecision());
-        assertEquals(Result.Decisions.VALID, result2.getDecision());
+
         assertEquals(Result.Decisions.INVALID, result3.getDecision());
         assertEquals("Invalid minimum duration [364]", result3.getValue().toString());
 
@@ -165,12 +156,8 @@ public class ProfilesValidityTest {
             .setValidity(new OptionalValidity(new Time(nBefore.toDate()), new Time(nAfter.toDate())))
             .build();
 
-        Result result1 = profile.validateCertificateNBefore(certTemplate);
-        Result result2 = profile.validateCertificateNAfter(certTemplate);
         Result result3 = profile.validateCertificateValidity(certTemplate);
 
-        assertEquals(Result.Decisions.VALID, result1.getDecision());
-        assertEquals(Result.Decisions.VALID, result2.getDecision());
         assertEquals(Result.Decisions.INVALID, result3.getDecision());
         assertEquals("Invalid maximum duration [4017]", result3.getValue().toString());
 
@@ -192,15 +179,13 @@ public class ProfilesValidityTest {
             .setValidity(new OptionalValidity(new Time(nBefore.toDate()), new Time(nAfter.toDate())))
             .build();
 
-        Result result1 = profile.validateCertificateNBefore(certTemplate);
-        Result result2 = profile.validateCertificateNAfter(certTemplate);
         Result result3 = profile.validateCertificateValidity(certTemplate);
 
-        assertEquals(Result.Decisions.OVERRULED, result1.getDecision());
-        assertEquals(new DateTime(2013, 1, 1, 0, 0, 0, DateTimeZone.UTC), result1.getValue());
-        assertEquals(Result.Decisions.OVERRULED, result2.getDecision());
-        assertEquals(new DateTime(2017, 12, 31, 0, 0, 0, DateTimeZone.UTC), result2.getValue());
+        logger.debug((String)result3.getValue());
         assertEquals(Result.Decisions.OVERRULED, result3.getDecision());
+        // TODO check the dates
+        // assertEquals(new DateTime(2013, 1, 1, 0, 0, 0, DateTimeZone.UTC), result3.getValue());
+        // assertEquals(new DateTime(2017, 12, 31, 0, 0, 0, DateTimeZone.UTC), result3.getValue());
 
     }
 
@@ -218,15 +203,12 @@ public class ProfilesValidityTest {
             .setValidity(new OptionalValidity(new Time(nBefore.toDate()), new Time(nAfter.toDate())))
             .build();
 
-        Result result1 = profile.validateCertificateNBefore(certTemplate);
-        Result result2 = profile.validateCertificateNAfter(certTemplate);
         Result result3 = profile.validateCertificateValidity(certTemplate);
 
-        assertEquals(Result.Decisions.VALID, result1.getDecision());
-        assertEquals(new DateTime(2015, 1, 1, 0, 0, 0, DateTimeZone.UTC), result1.getValue());
-        assertEquals(Result.Decisions.VALID, result2.getDecision());
-        assertEquals(new DateTime(2017, 12, 31, 23, 59, 59, DateTimeZone.UTC), result2.getValue());
         assertEquals(Result.Decisions.VALID, result3.getDecision());
+        // TODO verify dates
+        // assertEquals(new DateTime(2015, 1, 1, 0, 0, 0, DateTimeZone.UTC), result3.getValue());
+        // assertEquals(new DateTime(2017, 12, 31, 23, 59, 59, DateTimeZone.UTC), result3.getValue());
     }
 
     /**
@@ -243,16 +225,12 @@ public class ProfilesValidityTest {
             .setValidity(new OptionalValidity(new Time(nBefore.toDate()), new Time(nAfter.toDate())))
             .build();
 
-        Result result1 = profile.validateCertificateNBefore(certTemplate);
-        Result result2 = profile.validateCertificateNAfter(certTemplate);
         Result result3 = profile.validateCertificateValidity(certTemplate);
 
-        assertEquals(Result.Decisions.VALID, result1.getDecision());
-        assertEquals(new DateTime(2015, 1, 1, 0, 0, 0, DateTimeZone.UTC), result1.getValue());
-        assertEquals(Result.Decisions.VALID, result2.getDecision());
-        assertEquals(new DateTime(2016, 12, 31, 23, 59, 59, DateTimeZone.UTC), result2.getValue());
         assertEquals(Result.Decisions.VALID, result3.getDecision());
-
+        // TODO verify dates
+        // assertEquals(new DateTime(2015, 1, 1, 0, 0, 0, DateTimeZone.UTC), result3.getValue());
+        // assertEquals(new DateTime(2016, 12, 31, 23, 59, 59, DateTimeZone.UTC), result3.getValue());
     }
 
     /**
@@ -269,15 +247,12 @@ public class ProfilesValidityTest {
             .setValidity(new OptionalValidity(new Time(nBefore.toDate()), new Time(nAfter.toDate())))
             .build();
 
-        Result result1 = profile.validateCertificateNBefore(certTemplate);
-        Result result2 = profile.validateCertificateNAfter(certTemplate);
         Result result3 = profile.validateCertificateValidity(certTemplate);
 
-        assertEquals(Result.Decisions.VALID, result1.getDecision());
-        assertEquals(new DateTime(2015, 1, 1, 0, 0, 0, DateTimeZone.UTC), result1.getValue());
-        assertEquals(Result.Decisions.VALID, result2.getDecision());
-        assertEquals(new DateTime(2025, 12, 31, 23, 59, 59, DateTimeZone.UTC), result2.getValue());
         assertEquals(Result.Decisions.INVALID, result3.getDecision());
+        logger.debug((String) result3.getValue());
+        // assertEquals(new DateTime(2015, 1, 1, 0, 0, 0, DateTimeZone.UTC), result1.getValue());
+        // assertEquals(new DateTime(2025, 12, 31, 23, 59, 59, DateTimeZone.UTC), result2.getValue());
 
     }
 

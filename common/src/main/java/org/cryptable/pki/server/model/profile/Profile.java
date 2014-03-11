@@ -15,28 +15,15 @@ import java.util.List;
  */
 public interface Profile {
 
-     /**
+    /**
      * Verify the validity of the NBefore. Returns a result object, because it can be overruled.
      * The Result object has the overruled or copied object. If invalid a String is return with
      * an error message
      *
-     * @param certTemplate template of the certificate extensions (Bouncycastle)
-     * @return
-     */
-    public Result validateCertificateNBefore(CertTemplate certTemplate) throws ProfileException;
-
-    /**
      * Verify the validity of the NAfter. Returns a result object, because it can be overruled.
      * The Result object has the overruled or copied object. If invalid a String is return with
      * an error message
-     *
-     * @param certTemplate template of the certificate extensions (Bouncycastle)
-     * @return return a result object with a copy of the input if VALID, null when INVALID and
-     * a new value if overruled
-     */
-    public Result validateCertificateNAfter(CertTemplate certTemplate) throws ProfileException;
-
-    /**
+     * 
      * Verify the lenth of the validity.
      *
      * @param certTemplate template of the certificate extensions (Bouncycastle)

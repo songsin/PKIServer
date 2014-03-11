@@ -85,6 +85,6 @@ public class ProfilesJAXB implements Profiles {
 
     @Override
     public Profile get(int profileID) {
-        return profilesIDs.get(profileID);
+        return profilesIDs.get(Integer.valueOf(profileID));
     }
 }
