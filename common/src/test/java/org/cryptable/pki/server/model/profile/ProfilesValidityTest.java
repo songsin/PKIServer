@@ -181,7 +181,7 @@ public class ProfilesValidityTest {
 
         Result result3 = profile.validateCertificateValidity(certTemplate);
 
-        logger.debug((String)result3.getValue());
+//        logger.debug((String)result3.getValue());
         assertEquals(Result.Decisions.OVERRULED, result3.getDecision());
         // TODO check the dates
         // assertEquals(new DateTime(2013, 1, 1, 0, 0, 0, DateTimeZone.UTC), result3.getValue());

@@ -289,7 +289,7 @@
     <Certificate>
       <Validity>
         <Minimum_Duration>365</Minimum_Duration>
-        <Maximum_Duration>731</Maximum_Duration>
+        <Maximum_Duration>2300</Maximum_Duration>
         <Not_Before Overrule="Yes">20130101000000</Not_Before>
         <Not_After Overrule="Yes">20171231000000</Not_After>
       </Validity>

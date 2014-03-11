@@ -98,46 +98,19 @@ public class ProcessCertification {
         X500Name issuerName = new X500Name(pkiKeyStore.getCACertificate().getIssuerDN().getName());
         certTemplateBuilder.setIssuer(issuerName);
 
-        // Validation Dates
-        // NBefore
-        Result resultNBefore = certificateProfile.validateCertificateNBefore(tempCertTemplate);
-        if (resultNBefore.getDecision() == Result.Decisions.INVALID) {
-        	logger.error((String) resultNBefore.getValue());
-        }
-        overallResult = (overallResult == Result.Decisions.VALID) ? resultNBefore.getDecision() : overallResult;
-        DateTime nBefore = (DateTime)resultNBefore.getValue();
-        		
-        // NAfter
-        Result resultNAfter = certificateProfile.validateCertificateNAfter(tempCertTemplate);
-        if (resultNAfter.getDecision() == Result.Decisions.INVALID) {
-        	logger.error((String) resultNAfter.getValue());
-        }
-        overallResult = (overallResult == Result.Decisions.VALID) ? resultNBefore.getDecision() : overallResult;
-        DateTime nAfter = (DateTime)resultNAfter.getValue();
-        
-        OptionalValidity optionalValidity = new OptionalValidity(
-        		new Time((Date)nBefore.toDate()), 
-        		new Time((Date)nAfter.toDate()));
-        
-        // Fill in dates for validity period validation
-        certTemplateBuilder.setValidity(optionalValidity);
-
-        tempCertTemplate = certTemplateBuilder.build();
-
         // Only verification of time period no overrule results 
-        // TODO refactor the certificateProfile.validateCertificateValidity() check
         Result resultValidity = certificateProfile.validateCertificateValidity(tempCertTemplate);
         if (resultValidity.getDecision() == Result.Decisions.INVALID) {
         	logger.error((String) resultValidity.getValue());
         }
-        overallResult = (overallResult == Result.Decisions.VALID) ? resultNBefore.getDecision() : overallResult;
+        overallResult = (overallResult == Result.Decisions.VALID) ? resultValidity.getDecision() : overallResult;
 
         //Public Key
         Result resultKeyLength = certificateProfile.validateCertificateKeyLength(tempCertTemplate);
         if (resultKeyLength.getDecision() == Result.Decisions.INVALID) {
         	logger.error((String) resultKeyLength.getValue());
         }
-        overallResult = (overallResult == Result.Decisions.VALID) ? resultNBefore.getDecision() : overallResult;
+        overallResult = (overallResult == Result.Decisions.VALID) ? resultKeyLength.getDecision() : overallResult;
 
         KeyPair keyPair = null;
         if (tempCertTemplate.getPublicKey() == null) {
@@ -157,16 +130,16 @@ public class ProcessCertification {
         X509v3CertificateBuilder x509v3CertificateBuilder = new X509v3CertificateBuilder(
         		tempCertTemplate.getIssuer(),
         		BigInteger.valueOf(9),
-        		nBefore.toDate(),
-        		nAfter.toDate(),
+        		tempCertTemplate.getValidity().getNotBefore().getDate(),
+        		tempCertTemplate.getValidity().getNotAfter().getDate(),
         		tempCertTemplate.getSubject(),
         		tempCertTemplate.getPublicKey());
 
         for (Result result : results) {
         	if (result.getDecision() == Result.Decisions.INVALID) {
-            	logger.error((String) resultNAfter.getValue());
+            	logger.error((String) result.getValue());
         	}
-            overallResult = (overallResult == Result.Decisions.VALID) ? resultNBefore.getDecision() : overallResult;
+            overallResult = (overallResult == Result.Decisions.VALID) ? result.getDecision() : overallResult;
             
         	Extension extension = (Extension) result.getValue();
         	x509v3CertificateBuilder.addExtension(extension.getExtnId(), 
