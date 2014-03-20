@@ -37,7 +37,7 @@ import java.util.*;
  */
 public class ProfileJAXB implements Profile {
 
-    final Logger logger = LoggerFactory.getLogger(ProfilesJAXB.class);
+    final Logger logger = LoggerFactory.getLogger(ProfileJAXB.class);
 
     private final JAXBProfile jaxbProfile;
 
